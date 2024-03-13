@@ -1,0 +1,31 @@
+{
+  "name": "courier-service-app",
+  "version": "1.0.0",
+  "description": "A smart predictive maintenance application for a courier service company. This application allows users to view upcoming maintenance schedules and the overall status of vehicles.",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "ts-node ./src/server.ts",
+    "build": "tsc",
+    "test": "jest",
+    "test-watch": "jest --watchAll"
+  },
+  "keywords": [],
+  "author": "Zainundin",
+  "license": "MIT",
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/mongodb": "^4.0.7",
+    "@zainundin/mongoose-factory": "^1.0.4",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "express": "^4.18.3",
+    "mongodb": "^6.5.0",
+    "mongoose": "^8.2.1"
+  }
+}
