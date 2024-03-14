@@ -5,11 +5,13 @@ import apiRoutes from './route/api'
 
 class App {
     public app: Application
-    private database: Database
+    private database: Database | undefined = undefined
 
-    constructor(database: Database) {
+    constructor(database?: Database) {
         this.app = express()
-        this.database = database
+        if (database) {
+            this.database = database
+        }
         this.configureMiddleware()
         this.configureRoutes()
     }
@@ -24,6 +26,10 @@ class App {
         })
 
         this.app.use('/api/v1', apiRoutes)
+    }
+
+    public getApp(): Application {
+        return this.app
     }
 }
 
