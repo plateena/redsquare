@@ -1,16 +1,17 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { Model, Document } from 'mongoose';
+import { IBaseModel } from '../models/BaseModel';
 
 /**
  * Base REST Controller for handling CRUD operations.
  * @template T - The Mongoose document type
  */
-class BaseRestController<T extends Document> {
+class BaseRestController<T> {
     /**
      * Creates an instance of BaseRestController.
      * @param {Model<T>} model - The Mongoose model to be used for CRUD operations.
      */
-    constructor(private model: Model<T>) {}
+    constructor(private model: IBaseModel) {}
 
     /**
      * Retrieves all items from the collection.
@@ -21,7 +22,7 @@ class BaseRestController<T extends Document> {
      */
     list = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const items = await this.model.find();
+            const items = await this.model.search({});
             res.json(items);
         } catch (err) {
             next(err);
@@ -57,9 +58,8 @@ class BaseRestController<T extends Document> {
      */
     create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const newItem = new this.model(req.body);
-            await newItem.save();
-            res.status(201).json(newItem);
+            const data = await this.model.create(req.body);
+            res.status(201).json(data);
         } catch (err) {
             next(err);
         }
