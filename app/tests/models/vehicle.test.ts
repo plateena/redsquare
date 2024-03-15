@@ -17,11 +17,11 @@ describe('Vehicle Model', () => {
         await database.disconnect()
     })
 
-    it("can find model", async () => {
+    it('can find model', async () => {
         await vehicleFactory.count(10).create()
         let rs = await Vehicle.find({})
         expect(rs.length).toEqual(10)
-    });
+    })
 
     it('can retrive the Vehicle', async () => {
         let createdData = (await vehicleFactory.count(10).create()) as IVehicle[]

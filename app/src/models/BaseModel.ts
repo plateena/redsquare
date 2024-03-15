@@ -1,6 +1,6 @@
 import { Schema, Model, model } from 'mongoose'
 import { Request } from 'express'
-import { Document } from 'bson'
+import { Document } from 'mongodb'
 
 export interface IBaseModelOptions {
     query: (query: Request) => any
