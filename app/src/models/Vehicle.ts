@@ -1,5 +1,5 @@
 import { Schema, model, Model } from 'mongoose'
-import BaseModel, { IBaseModel } from './BaseModel'
+import BaseModel, { IBaseModel, IBaseModelOptions } from './BaseModel'
 
 // Define the interface for the Vehicle document
 export interface IVehicle {
@@ -23,7 +23,9 @@ export const VehicleSchema = new Schema<IVehicle>({
     // Add other fields as needed
 })
 
-const options = {
+const options: IBaseModelOptions = {
+    allowedSorts: ['color', 'plateNumber'],
+    defaultSort: 'plateNumber',
     query: (query: any) => {
         const filters: any = {}
         for (const key in query) {

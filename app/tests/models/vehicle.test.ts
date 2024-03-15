@@ -5,11 +5,15 @@ import VehicleModel, { IVehicle } from '../../src/models/Vehicle'
 import { ISearch } from '../../src/models/BaseModel'
 import { faker } from '@faker-js/faker'
 
-const database = new Database('mongodb://mongodb:27017')
+const database = new Database('mongodb://mongodb:27017/redsquare_test')
 
 describe('Vehicle Model', () => {
     beforeAll(async () => {
         await database.connect()
+    })
+
+    afterEach(async () => {
+        // clean up vehicle document after test
         await VehicleModel.truncate()
     })
 
@@ -32,5 +36,24 @@ describe('Vehicle Model', () => {
         })
 
         expect(result.data.length).toBe(10)
+    })
+
+    it('can sort vehicle list', async () => {
+        let createdData = (await vehicleFactory.count(10).create()) as IVehicle[]
+        let result: ISearch<IVehicle> = await Vehicle.search({
+            sort: 'brand,-color',
+        })
+
+        // Extract colors from createdData
+        const createdDataColors = createdData.map((vehicle) => vehicle.color)
+
+        // Extract colors from result.data
+        const resultDataColors = result.data?.map((vehicle) => vehicle.color )
+
+        // Sort the arrays of colors
+        createdDataColors.sort()
+
+        // Verify that the sorted arrays of colors match
+        expect(resultDataColors).toEqual(createdDataColors)
     })
 })

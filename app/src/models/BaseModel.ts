@@ -59,7 +59,7 @@ function handlePagination(query: Query<Document, Document>, urlQuery: any, optio
 }
 
 function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOptions): IBaseModel {
-    schema.statics.search = async function (urlQuery: any): Promise<ISearch<T>> {
+    schema.statics.search = async function (urlQuery: any): Promise<ISearch<T[]>> {
         let filters = []
         if (options?.query) {
             filters = options.query(urlQuery)
