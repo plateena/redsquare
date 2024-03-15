@@ -23,27 +23,24 @@ export const VehicleSchema = new Schema<IVehicle>({
     // Add other fields as needed
 })
 
-// VehicleSchema.plugin(BaseModel, { parseFilters: () => { return {} } })
-function parseFilters(query: any) {
-    const filters: any = {}
-    for (const key in query) {
-        if (key.startsWith('filter[') && key.endsWith(']')) {
-            const field = key.substring(7, key.length - 1) // Extract field name from filter[field] format
-            const value = query[key]
-            if (field === 'color') {
-                filters[field] = { $regex: new RegExp(value), $options: 'i' } // Treat symbol as regex filter
-            }
-            if (field === 'brand') {
-                filters[field] = { $regex: new RegExp(value), $options: 'i' } // Treat symbol as regex filter
+const options = {
+    query: (query: any) => {
+        const filters: any = {}
+        for (const key in query) {
+            if (key.startsWith('filter[') && key.endsWith(']')) {
+                const field = key.substring(7, key.length - 1) // Extract field name from filter[field] format
+                const value = query[key]
+                if (field === 'color') {
+                    filters[field] = { $regex: new RegExp(value), $options: 'i' } // Treat symbol as regex filter
+                }
+                if (field === 'brand') {
+                    filters[field] = { $regex: new RegExp(value), $options: 'i' } // Treat symbol as regex filter
+                }
             }
         }
-    }
 
-    return filters
-}
-
-const options = {
-    query: parseFilters,
+        return filters
+    },
 }
 
 export default BaseModel<IVehicle>('Vehicle', VehicleSchema, options)

@@ -5,7 +5,7 @@ const router: Router = express.Router()
 
 // Middleware for logging requests
 router.use((req, res, next) => {
-    console.log(`Request URL: ${req.originalUrl}, Method: ${req.method}`)
+    // console.log(`Request URL: ${req.originalUrl}, Method: ${req.method}`)
     next()
 })
 

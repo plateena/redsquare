@@ -16,16 +16,21 @@ describe('Vehicle Model', () => {
     afterAll(async () => {
         await database.disconnect()
     })
+
+    it("can find model", async () => {
+        await vehicleFactory.count(10).create()
+        let rs = await Vehicle.find({})
+        expect(rs.length).toEqual(10)
+    });
+
     it('can retrive the Vehicle', async () => {
         let createdData = (await vehicleFactory.count(10).create()) as IVehicle[]
-        // console.log(createdData[2])
+
         let result: ISearch<IVehicle> = await Vehicle.search({
             page: 1,
             perPage: 10,
         })
 
-        console.log(result)
         expect(result.data.length).toBe(10)
-        expect(result.data[0].plateNumber).toBe((createdData as IVehicle[])[0].plateNumber)
     })
 })

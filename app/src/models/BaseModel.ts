@@ -1,4 +1,4 @@
-import { Schema, Model, model } from 'mongoose'
+import { Schema, Model, model, Document } from 'mongoose'
 import { Request } from 'express'
 
 export interface IBaseModelOptions {
@@ -13,7 +13,7 @@ export interface ISearch<T> {
 }
 
 // Model interface
-export interface IBaseModel {
+export interface IBaseModel extends Document {
     search<T, R>(req: R): Promise<T>
     delete<T>(id: number | string): Promise<T[]>
     truncate<T>(): Promise<T>
@@ -25,6 +25,7 @@ function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOpt
         if (options?.query) {
             filters = options.query(urlQuery)
         }
+
         const query = this.find(filters)
 
         if (urlQuery?.page) {

@@ -1,35 +1,16 @@
 import express, { Router, Request, Response } from 'express'
 import Vehicle, { IVehicle } from '../models/Vehicle'
+import BaseRestController from '../controllers/BaseRestController'
+import { IBaseModel } from '../models/BaseModel'
 
 const router: Router = express.Router()
+const VehicleRestController = new BaseRestController<IBaseModel>(Vehicle)
 
-router.get('/', async (req: Request, res: Response) => {
-    try {
-        const vehicles: IVehicle[] = await Vehicle.search(req.query)
-        if (vehicles.length === 0) {
-            res.json('No vehicles found')
-        }
-
-        res.json(vehicles)
-    } catch (error) {
-        console.error('Error fetching vehicles:', error)
-        res.status(500).send('Internal Server Error')
-    }
-})
-
-router.get('/:id', async (req: Request, res: Response) => {
-    const { id } = req.params
-    try {
-        // const vehicle = await Vehicle.findById(id)
-        // if (!vehicle) {
-        //     res.status(404).send('Vehicle not found')
-        //     return
-        // }
-        // res.json(vehicle)
-    } catch (error) {
-        console.error('Error fetching vehicle:', error)
-        res.status(500).send('Internal Server Error')
-    }
-})
+router.get('/', VehicleRestController.list)
+router.get('/:id', VehicleRestController.getById)
+router.post('/', VehicleRestController.create)
+router.put('/:id', VehicleRestController.update)
+router.post('/:id', VehicleRestController.update)
+router.delete('/:id', VehicleRestController.delete)
 
 export default router
