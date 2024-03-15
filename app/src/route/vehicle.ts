@@ -5,7 +5,7 @@ const router: Router = express.Router()
 
 router.get('/', async (req: Request, res: Response) => {
     try {
-        const vehicles: IVehicle[] = await Vehicle.search({})
+        const vehicles: IVehicle[] = await Vehicle.search(req.query)
         if (vehicles.length === 0) {
             res.json('No vehicles found')
         }
