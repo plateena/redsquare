@@ -23,12 +23,24 @@ describe('Vehicle Model', () => {
         expect(rs.length).toEqual(10)
     });
 
-    it('can retrive the Vehicle', async () => {
+    it('can retrive the list', async () => {
         let createdData = (await vehicleFactory.count(10).create()) as IVehicle[]
 
         let result: ISearch<IVehicle> = await Vehicle.search({
             page: 1,
             perPage: 10,
+        })
+
+        expect(result.data.length).toBe(10)
+    })
+
+    it('can sort the list', async () => {
+        let createdData = (await vehicleFactory.count(10).create()) as IVehicle[]
+
+        let result: ISearch<IVehicle> = await Vehicle.search({
+            page: 1,
+            perPage: 10,
+            sort: 'plateNumber'
         })
 
         expect(result.data.length).toBe(10)

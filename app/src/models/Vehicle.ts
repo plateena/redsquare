@@ -41,6 +41,12 @@ const options = {
 
         return filters
     },
+
+    sort: (query: any) => {
+        let sortQuery = {}
+
+        return sortQuery
+    }
 }
 
 export default BaseModel<IVehicle>('Vehicle', VehicleSchema, options)

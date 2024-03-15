@@ -3,6 +3,7 @@ import { Request } from 'express'
 
 export interface IBaseModelOptions {
     query: (query: Request) => any
+    sort: (query: Request) => any
 }
 
 export interface ISearch<T> {
@@ -19,7 +20,7 @@ export interface IBaseModel extends Document {
     truncate<T>(): Promise<T>
 }
 
-function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOptions): IBaseModel {
+function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOptions): Model<T & IBaseModel> {
     schema.statics.search = async function (urlQuery: any): Promise<ISearch<T>> {
         let filters = []
         if (options?.query) {
@@ -37,6 +38,10 @@ function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOpt
             }
 
             query.limit(perPage).skip(page)
+        }
+
+        if (options?.sort) {
+            query.sort({ plateNumber: -1 })
         }
         const data = await query
         return {
@@ -56,7 +61,7 @@ function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOpt
         }
     }
 
-    const theModel = model<T, IBaseModel>('Vehicle', schema)
+    const theModel = model<T, IBaseModel>(modelName, schema)
 
     return theModel
 }

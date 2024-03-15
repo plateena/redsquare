@@ -7,7 +7,7 @@
     "start": "ts-node ./src/server.ts",
     "build": "tsc",
     "test": "jest",
-    "test-watch": "jest --verbose --color --watchAll --detectOpenHandles"
+    "test-watch": "jest --verbose --color --watchAll --detectOpenHandles --coverage=false"
   },
   "keywords": [],
   "author": "Zainundin",
