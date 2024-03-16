@@ -6,6 +6,7 @@ export interface IBaseModelOptions {
     query: (query: Request) => any
     allowedSorts?: string[]
     defaultSort?: string
+    populate?: string[]
     paginattion?: {
         perPage: number
     }
@@ -58,6 +59,17 @@ function handlePagination(query: Query<Document, Document>, urlQuery: any, optio
     }
 }
 
+function handlePopulate(query: Query<Document, Document>, urlQuery: any, options?: IBaseModelOptions): void {
+    if (!urlQuery?.populate || !options?.populate) return;
+
+    const allowedPopulates = options.populate;
+    const requestedPopulates = urlQuery.populate.split(',');
+    const validPopulates = requestedPopulates.filter((populate: string) => allowedPopulates.includes(populate));
+
+    query.populate(validPopulates)
+}
+
+
 function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOptions): IBaseModel {
     schema.statics.search = async function (urlQuery: any): Promise<ISearch<T[]>> {
         let filters = []
@@ -67,10 +79,11 @@ function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOpt
 
         let query = this.find(filters)
 
+        handlePopulate(query, urlQuery, options)
         handlePagination(query, urlQuery, options)
         handleSort(query, urlQuery, options)
 
-        const data = await query
+        const data = await query.exec()
         return {
             status: 'success',
             _filter: JSON.stringify(query.getFilter()),
