@@ -1,5 +1,5 @@
-import { Schema, model, Model } from 'mongoose'
-import BaseModel, { IBaseModel, IBaseModelOptions } from './BaseModel'
+import { Schema, Types } from 'mongoose'
+import BaseModel, { IBaseModelOptions } from './BaseModel'
 
 // Define the interface for the Vehicle document
 export interface IVehicle {
@@ -8,10 +8,8 @@ export interface IVehicle {
     brand: string
     model: string
     year: number
-    _id?: string
-    __v?: number
-    // Add other fields as needed
-}
+    _id?: Types.ObjectId
+};;
 
 // Define the schema for the Vehicle collection
 export const VehicleSchema = new Schema<IVehicle>({

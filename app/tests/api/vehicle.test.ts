@@ -13,7 +13,7 @@ describe('Vehicle API', () => {
     })
 
     it('can view vehicle list', async () => {
-        const data = VehicleFactory.count(10).make() as IVehicle[]
+        const data = (await VehicleFactory.count(10).make()) as IVehicle[]
 
         const mongoResult: ISearch<IVehicle> = {
             status: 'success',

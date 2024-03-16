@@ -10,7 +10,7 @@ class VehicleFactory extends BaseFactory<IVehicle> {
     }
 
     // Implement the abstract definition method
-    definition(): IVehicle {
+    async definition(): Promise<IVehicle> {
         // Define the structure of your data here
         return {
             plateNumber: faker.vehicle.vrm(),

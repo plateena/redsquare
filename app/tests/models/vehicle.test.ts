@@ -7,6 +7,11 @@ import { faker } from '@faker-js/faker'
 import './../setup-db'
 
 describe('Vehicle Model', () => {
+    beforeEach(async () => {
+        // clean up vehicle document after test
+        await VehicleModel.truncate()
+    })
+
     afterEach(async () => {
         // clean up vehicle document after test
         await VehicleModel.truncate()
@@ -49,7 +54,7 @@ describe('Vehicle Model', () => {
     })
 
     it('can add vehilcle', async () => {
-        const mockData = vehicleFactory.make()
+        const mockData = await vehicleFactory.make()
         const result = await Vehicle.create(mockData)
 
         expect(result).toEqual(expect.objectContaining(result))
