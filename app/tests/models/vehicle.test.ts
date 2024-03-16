@@ -4,21 +4,12 @@ import vehicleFactory from '../factories/vehicleFactory'
 import VehicleModel, { IVehicle } from '../../src/models/Vehicle'
 import { ISearch } from '../../src/models/BaseModel'
 import { faker } from '@faker-js/faker'
-
-const database = new Database('mongodb://mongodb:27017/redsquare_test')
+import './../setup-db'
 
 describe('Vehicle Model', () => {
-    beforeAll(async () => {
-        await database.connect()
-    })
-
     afterEach(async () => {
         // clean up vehicle document after test
         await VehicleModel.truncate()
-    })
-
-    afterAll(async () => {
-        await database.disconnect()
     })
 
     it('can find model', async () => {
