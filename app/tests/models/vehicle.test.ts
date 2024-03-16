@@ -39,12 +39,47 @@ describe('Vehicle Model', () => {
         const createdDataColors = createdData.map((vehicle) => vehicle.color)
 
         // Extract colors from result.data
-        const resultDataColors = result.data?.map((vehicle) => vehicle.color )
+        const resultDataColors = result.data?.map((vehicle) => vehicle.color)
 
         // Sort the arrays of colors
         createdDataColors.sort()
 
         // Verify that the sorted arrays of colors match
         expect(resultDataColors).toEqual(createdDataColors)
+    })
+
+    it('can add vehilcle', async () => {
+        const mockData = vehicleFactory.make()
+        const result = await Vehicle.create(mockData)
+
+        expect(result).toEqual(expect.objectContaining(result))
+    })
+
+    it('can edit vehicle', async () => {
+        // Create a new vehicle and retrieve its ID
+        const mockData = (await vehicleFactory.create()) as IVehicle
+        const vehicleId = mockData._id?.toString()
+
+        // Find the vehicle by its ID
+        const foundVehicle = await Vehicle.findById(vehicleId)
+
+        // Ensure that the vehicle was found
+        expect(foundVehicle).toBeDefined()
+
+        // Modify the properties of the found vehicle
+        foundVehicle!.color = 'edit-' + foundVehicle!.color
+        foundVehicle!.brand = 'edit-' + foundVehicle!.brand
+        foundVehicle!.model = 'edit-' + foundVehicle!.model
+
+        // Save the changes to the database
+        await foundVehicle!.save()
+
+        // Retrieve the updated vehicle from the database
+        const updatedVehicle = await Vehicle.findById(vehicleId)
+
+        // Verify that the properties of the updated vehicle match the modified values
+        expect(updatedVehicle!.color).toEqual('edit-' + mockData.color)
+        expect(updatedVehicle!.brand).toEqual('edit-' + mockData.brand)
+        expect(updatedVehicle!.model).toEqual('edit-' + mockData.model)
     })
 })
