@@ -8,6 +8,7 @@ export interface IVehicle {
     brand: string
     model: string
     year: number
+    maintenance?: Types.ObjectId | Record<string, unknown>
     _id?: Types.ObjectId
 };;
 
@@ -18,6 +19,7 @@ export const VehicleSchema = new Schema<IVehicle>({
     brand: { type: String, required: true },
     model: { type: String, required: true },
     year: { type: Number, required: true },
+    maintenance: { type: Schema.Types.ObjectId, ref: 'Maintenance', required: false },
     // Add other fields as needed
 })
 

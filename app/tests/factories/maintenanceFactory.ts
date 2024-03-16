@@ -20,6 +20,7 @@ class MaintenanceFactory extends BaseFactory<IMaintenance> {
             vehicle: { type: Schema.Types.ObjectId, ref: 'Vehicle', _id: vehicle._id?.toString() },
             description: faker.lorem.paragraph(),
             date: faker.date.soon({ days: 200 }),
+            status: 'pending',
         }
     }
 }

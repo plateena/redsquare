@@ -7,8 +7,8 @@ export interface IMaintenance {
     vehicle: Types.ObjectId | Record<string, unknown>
     description: string
     date: Date
+    status: string
     _id?: Types.ObjectId
-
 }
 
 // Define the schema for the Maintenance collection
@@ -16,7 +16,11 @@ export const MaintenanceSchema = new Schema<IMaintenance>({
     vehicle: { type: Schema.Types.ObjectId, ref: 'Vehicle', required: true },
     description: { type: String, required: true },
     date: { type: Date, required: true },
-    // Add other fields as needed
+    status: {
+        type: String,
+        enum: ['pending', 'in_progress', 'completed'],
+        default: 'pending',
+    },
 })
 
 // Define options for the BaseModel

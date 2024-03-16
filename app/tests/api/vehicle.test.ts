@@ -2,7 +2,6 @@ import AppClass from '../../src/app'
 import request from 'supertest'
 import Vehicle, { IVehicle } from '../../src/models/Vehicle'
 import VehicleFactory from '../factories/vehicleFactory'
-import { IBaseModel } from '../../src/models/BaseModel'
 import { ISearch } from '../../src/models/BaseModel'
 
 let app = new AppClass().app
