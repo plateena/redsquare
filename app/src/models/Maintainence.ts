@@ -23,6 +23,7 @@ export const MaintenanceSchema = new Schema<IMaintenance>({
 const options: IBaseModelOptions = {
     allowedSorts: ['date'],
     defaultSort: '-date', // Default sorting by date in descending order
+    populate: ['vehicle'],
     query: (query: any) => {
         // Implement query logic if needed
         // This can be similar to what you have in the Vehicle model

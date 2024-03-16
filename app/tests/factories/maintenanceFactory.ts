@@ -15,7 +15,6 @@ class MaintenanceFactory extends BaseFactory<IMaintenance> {
     async definition(): Promise<IMaintenance> {
         // Define the structure of your data here
         const vehicle = (await vehicleFactory.create()) as IVehicle
-        console.log(vehicle)
 
         return {
             vehicle: { type: Schema.Types.ObjectId, ref: 'Vehicle', _id: vehicle._id?.toString() },
