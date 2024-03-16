@@ -82,4 +82,19 @@ describe('Vehicle Model', () => {
         expect(updatedVehicle!.brand).toEqual('edit-' + mockData.brand)
         expect(updatedVehicle!.model).toEqual('edit-' + mockData.model)
     })
+
+    it('can delete vehicle', async () => {
+        // Create a new vehicle and retrieve its ID
+        const mockData = (await vehicleFactory.create()) as IVehicle
+        const vehicleId = mockData._id?.toString()
+
+        // Attempt to delete the vehicle by its ID
+        await Vehicle.findByIdAndDelete(vehicleId)
+
+        // Attempt to find the deleted vehicle
+        const deletedVehicle = await Vehicle.findById(vehicleId)
+
+        // Verify that the deleted vehicle is null (not found)
+        expect(deletedVehicle).toBeNull()
+    })
 })
