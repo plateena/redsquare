@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from 'express'
 import Database from './database'
 import mongoose, { Document, Schema } from 'mongoose'
 import apiRoutes from './route/api'
+import cors from 'cors'
 
 class App {
     public app: Application
@@ -17,6 +18,7 @@ class App {
     }
 
     private configureMiddleware(): void {
+        this.app.use(cors())
         this.app.use(express.json())
     }
 
