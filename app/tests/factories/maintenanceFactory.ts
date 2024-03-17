@@ -1,14 +1,14 @@
 import { Model, Types, Schema } from 'mongoose'
 import BaseFactory from '@zainundin/mongoose-factory'
 import { faker } from '@faker-js/faker'
-import MaintainanceModel, { IMaintenance } from '../../src/models/Maintainence'
+import MaintenanceModel, { IMaintenance } from '../../src/models/Maintenance'
 import { IVehicle } from '../../src/models/Vehicle'
 import vehicleFactory from './vehicleFactory'
 
 // Create a subclass of BaseFactory for your model
 class MaintenanceFactory extends BaseFactory<IMaintenance> {
     constructor() {
-        super(MaintainanceModel as unknown as Model<IMaintenance>)
+        super(MaintenanceModel as unknown as Model<IMaintenance>)
     }
 
     // Implement the abstract definition method

@@ -1,5 +1,5 @@
 import { ISearch } from '../../src/models/BaseModel'
-import Maintenance, { IMaintenance } from '../../src/models/Maintainence'
+import Maintenance, { IMaintenance } from '../../src/models/Maintenance'
 import maintenanceFactory from '../factories/maintenanceFactory'
 import './../setup-db'
 
@@ -13,13 +13,13 @@ describe('Maintenence Model', () => {
     })
 
     it('can find model', async () => {
-        const mockData = await maintenanceFactory.count(10).create()
+         await maintenanceFactory.count(10).create()
         const rs = await Maintenance.find({})
         expect(rs.length).toEqual(10)
     })
 
     it('can retrive the Maintenance', async () => {
-        let createdData = (await maintenanceFactory.count(10).create()) as IMaintenance[]
+        await maintenanceFactory.count(10).create()
 
         let result: ISearch<IMaintenance> = await Maintenance.search({
             page: 1,
