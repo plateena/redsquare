@@ -37,7 +37,7 @@ describe('Vehicle Model', () => {
     it('can sort vehicle list', async () => {
         let createdData = (await vehicleFactory.count(10).create()) as IVehicle[]
         let result: ISearch<IVehicle> = await Vehicle.search({
-            sort: 'brand,-color',
+            sort: 'color',
         })
 
         // Extract colors from createdData

@@ -41,7 +41,7 @@ function handleSort(query: Query<Document, Document>, urlQuery: any, options?: I
     for (const sort of sorts) {
         const cleanSort = sort.startsWith('-') ? sort.substring(1) : sort
         if (options.allowedSorts.includes(cleanSort)) {
-            query.sort(cleanSort)
+            query.sort(sort)
         }
     }
 }
