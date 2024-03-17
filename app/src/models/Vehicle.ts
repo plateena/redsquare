@@ -10,7 +10,7 @@ export interface IVehicle {
     year: number
     maintenance?: Types.ObjectId | Record<string, unknown>
     _id?: Types.ObjectId
-};;
+}
 
 // Define the schema for the Vehicle collection
 export const VehicleSchema = new Schema<IVehicle>({
