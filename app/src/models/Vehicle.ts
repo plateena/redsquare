@@ -26,6 +26,7 @@ export const VehicleSchema = new Schema<IVehicle>({
 const options: IBaseModelOptions = {
     allowedSorts: ['color', 'plateNumber'],
     defaultSort: 'plateNumber',
+    populate: ['maintenance'],
     query: (query: any) => {
         const filters: any = {}
         for (const key in query) {
