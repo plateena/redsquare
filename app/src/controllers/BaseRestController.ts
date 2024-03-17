@@ -22,7 +22,7 @@ class BaseRestController<T> {
      */
     list = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const items = await this.model.search({});
+            const items = await this.model.search(req.query);
             res.json(items);
         } catch (err) {
             next(err);

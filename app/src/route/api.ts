@@ -10,7 +10,7 @@ router.use((req, res, next) => {
 })
 
 // Mount vehicle routes
-router.use('/vehicles', vehicleRoutes)
+router.use('/vehicle', vehicleRoutes)
 // Add other routes here...
 
 export default router
