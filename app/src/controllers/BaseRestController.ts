@@ -1,5 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
-import { Model, Document } from 'mongoose';
+import { Request, Response, NextFunction } from 'express';
 import { IBaseModel } from '../models/BaseModel';
 
 /**
