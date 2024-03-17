@@ -1,4 +1,4 @@
-import { Model, Types, Schema } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import BaseFactory from '@zainundin/mongoose-factory'
 import { faker } from '@faker-js/faker'
 import MaintenanceModel, { IMaintenance } from '../../src/models/Maintenance'
@@ -13,13 +13,10 @@ class MaintenanceFactory extends BaseFactory<IMaintenance> {
 
     // Implement the abstract definition method
     async definition(): Promise<IMaintenance> {
-        // Define the structure of your data here
-        const vehicle = (await vehicleFactory.create()) as IVehicle
-
         return {
-            vehicle: { type: Schema.Types.ObjectId, ref: 'Vehicle', _id: vehicle._id?.toString() },
+            vehicle: faker.database.mongodbObjectId() as unknown as Types.ObjectId,
             description: faker.lorem.paragraph(),
-            date: faker.date.soon({ days: 200 }),
+            date: faker.date.soon({ days: 200 }).toISOString() as unknown as Date,
             status: 'pending',
         }
     }

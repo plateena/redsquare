@@ -1,6 +1,8 @@
 import { ISearch } from '../../src/models/BaseModel'
+import { IVehicle } from '../../src/models/Vehicle'
 import Maintenance, { IMaintenance } from '../../src/models/Maintenance'
 import maintenanceFactory from '../factories/maintenanceFactory'
+import vehicleFactory from '../factories/vehicleFactory'
 import './../setup-db'
 
 describe('Maintenence Model', () => {
@@ -13,13 +15,19 @@ describe('Maintenence Model', () => {
     })
 
     it('can find model', async () => {
-         await maintenanceFactory.count(10).create()
+        await maintenanceFactory.count(10).create()
         const rs = await Maintenance.find({})
         expect(rs.length).toEqual(10)
     })
 
     it('can retrive the Maintenance', async () => {
-        await maintenanceFactory.count(10).create()
+        await maintenanceFactory
+            .count(10)
+            .withState(async () => {
+                const vehicle = (await vehicleFactory.create()) as IVehicle
+                return { vehicle: vehicle._id }
+            })
+            .create()
 
         let result: ISearch<IMaintenance> = await Maintenance.search({
             page: 1,
