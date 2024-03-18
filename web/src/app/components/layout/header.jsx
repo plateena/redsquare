@@ -11,7 +11,7 @@ const Header = () => {
             <Link href="/">Home</Link>
           </li>
           <li>
-            <Link href="/about">About</Link>
+            <Link href="/vehicle">Vehicle</Link>
           </li>
           {/* Add more navigation links as needed */}
         </ul>
