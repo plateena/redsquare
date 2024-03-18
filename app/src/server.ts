@@ -5,7 +5,7 @@ import Database from './database'
 const app = express()
 const port = 8000
 
-const database = new Database('mongodb://mongodb:27017')
+const database = new Database('mongodb://mongodb:27017/redsquare_test')
 
 database
     .connect()

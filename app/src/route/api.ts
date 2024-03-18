@@ -1,7 +1,8 @@
-import express, { Router } from 'express'
+import { Router } from 'express'
 import vehicleRoutes from './vehicle'
+import maintenanceRoutes from './maintenance'
 
-const router: Router = express.Router()
+const router: Router = Router()
 
 // Middleware for logging requests
 router.use((req, res, next) => {
@@ -9,8 +10,7 @@ router.use((req, res, next) => {
     next()
 })
 
-// Mount vehicle routes
-router.use('/vehicles', vehicleRoutes)
-// Add other routes here...
+router.use('/vehicle', vehicleRoutes)
+router.use('/maintenance', maintenanceRoutes)
 
 export default router

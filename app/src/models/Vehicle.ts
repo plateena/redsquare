@@ -1,5 +1,5 @@
-import { Schema, model, Model } from 'mongoose'
-import BaseModel, { IBaseModel } from './BaseModel'
+import { Schema, Types } from 'mongoose'
+import BaseModel, { IBaseModelOptions } from './BaseModel'
 
 // Define the interface for the Vehicle document
 export interface IVehicle {
@@ -8,10 +8,9 @@ export interface IVehicle {
     brand: string
     model: string
     year: number
-    _id?: string
-    __v?: number
-    // Add other fields as needed
-}
+    maintenance?: Types.ObjectId | Record<string, unknown>
+    _id?: Types.ObjectId
+};;
 
 // Define the schema for the Vehicle collection
 export const VehicleSchema = new Schema<IVehicle>({
@@ -20,10 +19,14 @@ export const VehicleSchema = new Schema<IVehicle>({
     brand: { type: String, required: true },
     model: { type: String, required: true },
     year: { type: Number, required: true },
+    maintenance: { type: Schema.Types.ObjectId, ref: 'Maintenance', required: false },
     // Add other fields as needed
 })
 
-const options = {
+const options: IBaseModelOptions = {
+    allowedSorts: ['color', 'plateNumber'],
+    defaultSort: 'plateNumber',
+    populate: ['maintenance'],
     query: (query: any) => {
         const filters: any = {}
         for (const key in query) {

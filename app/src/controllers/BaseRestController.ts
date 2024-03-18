@@ -1,5 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
-import { Model, Document } from 'mongoose';
+import { Request, Response, NextFunction } from 'express';
 import { IBaseModel } from '../models/BaseModel';
 
 /**
@@ -22,7 +21,7 @@ class BaseRestController<T> {
      */
     list = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const items = await this.model.search({});
+            const items = await this.model.search(req.query);
             res.json(items);
         } catch (err) {
             next(err);

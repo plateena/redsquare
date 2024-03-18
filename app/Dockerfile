@@ -20,4 +20,5 @@ RUN npm run build
 EXPOSE 8000
 
 # Command to run the application
-CMD ["tail", "-f", "/dev/null"]
+# CMD ["tail", "-f", "/dev/null"]
+CMD ["npm", "start"]
