@@ -55,8 +55,12 @@ function handleSort(query: Query<Document, Document>, urlQuery: any, options?: I
     }
 }
 
-async function handlePagination(query: Query<Document, Document>, totalQuery: Query<Document, Document>, urlQuery: any, options?: IBaseModelOptions): Promise<IPagination> {
-        const total = await totalQuery.countDocuments()
+async function handlePagination(
+    query: Query<Document, Document>,
+    total: number,
+    urlQuery: any,
+    options?: IBaseModelOptions
+): Promise<IPagination> {
     if (urlQuery?.page) {
         const page = urlQuery.page - 1
         let perPage = options?.pagination?.perPage || 5
@@ -65,7 +69,7 @@ async function handlePagination(query: Query<Document, Document>, totalQuery: Qu
             perPage = parseInt(urlQuery.perPage)
         }
 
-        const totalPages = Math.ceil(total / perPage);
+        const totalPages = Math.ceil(total / perPage)
 
         const pagination: IPagination = {
             page: page,
@@ -83,7 +87,7 @@ async function handlePagination(query: Query<Document, Document>, totalQuery: Qu
         page: 0,
         perPage: 0,
         total: total,
-        lastPage: 0
+        lastPage: 0,
     }
 }
 
@@ -98,18 +102,18 @@ function handlePopulate(query: Query<Document, Document>, urlQuery: any, options
 }
 
 function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOptions): IBaseModel {
-    schema.statics.search = async function (urlQuery: any): Promise<any> {
+    schema.statics.search = async function (urlQuery: any): Promise<ISearch<T>> {
         let filters = {}
-        let perPage = urlQuery.perPage || appConfig.pagination.per_page
         if (options?.query) {
             filters = options.query(urlQuery)
         }
 
         let query = this.find(filters)
         let totalQuery = this.find(filters)
+        const total = await totalQuery.countDocuments()
 
         handlePopulate(query, urlQuery, options)
-        let pagination: IPagination = await handlePagination(query, totalQuery, urlQuery, options)
+        let pagination: IPagination = await handlePagination(query, total, urlQuery, options)
         handleSort(query, urlQuery, options)
 
         const data = await query.exec()
@@ -119,6 +123,7 @@ function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOpt
             _filter: JSON.stringify(query.getFilter()),
             _options: query.getOptions(),
             data,
+            total,
             pagination,
         }
     }
