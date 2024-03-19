@@ -1,9 +1,9 @@
+import mongoose, { ConnectOptions, Document, Model, Schema } from 'mongoose'
 import vehicleFactory from '../factories/vehicleFactory'
 import { faker } from '@faker-js/faker'
 import maintenanceFactory from '../factories/maintenanceFactory'
 import IVehicle from '../../src/models/Vehicle'
 import IBaseModel from '../../src/models/BaseModel'
-import './../setup-db'
 
 const brandData = [
     {
@@ -143,7 +143,8 @@ const colorData = [
 ]
 
 ;(async () => {
-    const vehicles = await vehicleFactory
+    await mongoose.connect('mongodb://mongodb:27017/redsquare_test', {});
+    const vehicles = (await vehicleFactory
         .withState(async () => {
             let brand: { name: string; models: string[] } = faker.helpers.arrayElement(brandData) as {
                 name: string
@@ -156,12 +157,25 @@ const colorData = [
                 color: faker.helpers.arrayElement(colorData),
             } as Partial<typeof IBaseModel>
         })
-        .count(10)
-        .make() as unknown as any
+        .count(1)
+        .create()) as unknown as any
 
+    let mt = []
     for (const vehicle of vehicles) {
         console.log(vehicle)
+        const rs = await maintenanceFactory
+            .withState(async () => {
+                return {
+                    vehicle: vehicle._id,
+                }
+            })
+            .count(1)
+            .make()
+        mt.push(rs)
     }
+
+    console.log(mt)
+    await mongoose.disconnect()
 })()
 
 it('run gen-data', async () => {
