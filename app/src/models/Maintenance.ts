@@ -1,5 +1,6 @@
 import { Schema, Types, Model } from 'mongoose'
 import BaseModel, { IBaseModel, IBaseModelOptions } from './BaseModel'
+import Vehicle from './Vehicle'
 
 // Define the interface for the Maintenance document
 export interface IMaintenance {
@@ -26,7 +27,7 @@ const options: IBaseModelOptions = {
     allowedSorts: ['date'],
     defaultSort: '-date',
     populate: ['vehicle'],
-    query: (query: any) => {
+    query: async (query: any) => {
         const filters: any = {}
         if (query.filter) {
             for (const [key, value] of Object.entries(query.filter)) {
@@ -37,7 +38,12 @@ const options: IBaseModelOptions = {
                     filters[key].push(value)
                 }
                 if (key === 'vehiclePlateNumber') {
-                    filters['vehicle'] = { $in: await Vehicle.find({ plateNumber: value }, '_id') }
+                    filters['vehicle'] = {
+                        $in: await Vehicle.find(
+                            { plateNumber: { $regex: new RegExp(value as unknown as string), $options: 'i' } },
+                            '_id'
+                        ),
+                    }
                 }
             }
         }

@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { apiConfig } from '../config';
 import VehicleCard from '../components/vehicle/card';
 import ConfirmationModal from '../components/ConfirmModal';
+import { debounce } from '../util'
 
 const Vehicle = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -16,22 +17,11 @@ const Vehicle = () => {
     const [searchPlate, setSearchPlate] = useState('');
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
 
-    // Function to debounce search input changes
-    const debounce = (func, delay) => {
-        let timeoutId;
-        return function (...args) {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => func.apply(this, args), delay);
-        };
-    };
-
     // Function to fetch vehicles
     const fetchVehicles = async (searchQuery) => {
         try {
             let endpoint = `${apiConfig.url}/vehicle`;
-            if (searchQuery) {
-                endpoint += `?filter[plateNumber]=${encodeURIComponent(searchQuery)}`;
-            }
+            if (searchQuery) endpoint += `?filter[plateNumber]=${encodeURIComponent(searchQuery)}`;
             const res = await fetch(endpoint);
             const data = await res.json();
             setVehicles(data.data);

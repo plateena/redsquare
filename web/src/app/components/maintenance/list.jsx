@@ -1,10 +1,18 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSort, faSortUp, faSortDown, faPlusCircle, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
+import {
+    faSort,
+    faSearch,
+    faSortUp,
+    faSortDown,
+    faPlusCircle,
+    faEdit,
+    faTrash,
+} from '@fortawesome/free-solid-svg-icons'
 import Modal from '../Modal'
 import MaintenanceForm from './form'
-import { formatDateDifference, formatDate } from '../../util'
+import { formatDateDifference, formatDate, debounce } from '../../util'
 import ConfirmationModal from '../ConfirmModal'
 import { apiConfig } from './../../config'
 
@@ -12,19 +20,17 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
     const [maintenanceData, setMaintenanceData] = useState([])
     const [loading, setLoading] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [searchPlate, setSearchPlate] = useState('')
     const [selectedMaintenanceId, setSelectedMaintenanceId] = useState(null)
     const [selectedVehicleId, setSelectedVehicleId] = useState(vehicleId)
     const [sort, setSort] = useState('asc')
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false)
 
-    useEffect(() => {
-        fetchData()
-    }, [vehicleId, sort])
-
     const fetchData = async () => {
         try {
             let url = `${apiConfig.url}/maintenance?populate=vehicle`
             if (vehicleId) url += `&filter[vehicle]=${vehicleId}`
+            if (searchPlate) url += `&filter[vehiclePlateNumber]=${encodeURIComponent(searchPlate)}`;
             if (sort) url += `&sort=${sort === 'asc' ? 'date' : '-date'}`
             const res = await fetch(url)
             const { data } = await res.json()
@@ -35,6 +41,13 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
             setLoading(false)
         }
     }
+
+    const debouncedFetchMaintenance = debounce(fetchData, 500)
+
+    useEffect(() => {
+        setLoading(true)
+        debouncedFetchMaintenance(searchPlate)
+    }, [searchPlate, sort])
 
     const handleSort = () => {
         setSort((prevSort) => {
@@ -92,6 +105,16 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
                     </a>
                 )}
             </h2>
+        {!hideVehicle && (<div className="flex items-center mb-4">
+                <FontAwesomeIcon icon={faSearch} className="text-gray-500 mr-2" />
+                <input
+                    type="text"
+                    placeholder="Search by Plate Number"
+                    value={searchPlate}
+                    onChange={(e) => setSearchPlate(e.target.value)}
+                    className="border border-gray-300 px-3 py-2 rounded-md w-full max-w-md"
+                />
+            </div>)}
             {loading ? (
                 <p>Loading...</p>
             ) : maintenanceData.length === 0 ? (

@@ -105,7 +105,7 @@ function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOpt
     schema.statics.search = async function (urlQuery: any): Promise<ISearch<T>> {
         let filters = {}
         if (options?.query) {
-            filters = options.query(urlQuery)
+            filters = await options.query(urlQuery)
         }
 
         let query = this.find(filters)

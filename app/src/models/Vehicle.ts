@@ -30,7 +30,7 @@ const options: IBaseModelOptions = {
     allowedSorts: ['color', 'plateNumber'],
     defaultSort: 'plateNumber',
     populate: ['maintenance'],
-    query: (query: any) => {
+    query: async (query: any) => {
         const filters: any = {}
         if (query.filter) {
             for (const [key, value] of Object.entries(query.filter)) {
@@ -49,7 +49,7 @@ const options: IBaseModelOptions = {
     },
 }
 
-VehiceSchema.statics.findByIdAndDelete = async function (id: Types.ObjectId): Promise<any> {
+VehicleSchema.statics.findByIdAndDelete = async function (id: Types.ObjectId): Promise<any> {
     await MaintenanceModel.deleteMany({ vehicle: id })
     await this.deleteOne({ _id: id })
     return {
