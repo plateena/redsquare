@@ -8,9 +8,10 @@ export interface IVehicle {
     brand: string
     model: string
     year: number
+    status: string
     maintenance?: Types.ObjectId | Record<string, unknown>
     _id?: Types.ObjectId
-};;
+}
 
 // Define the schema for the Vehicle collection
 export const VehicleSchema = new Schema<IVehicle>({
@@ -19,6 +20,7 @@ export const VehicleSchema = new Schema<IVehicle>({
     brand: { type: String, required: true },
     model: { type: String, required: true },
     year: { type: Number, required: true },
+    status: { type: String, required: true },
     maintenance: { type: Schema.Types.ObjectId, ref: 'Maintenance', required: false },
     // Add other fields as needed
 })
@@ -29,19 +31,19 @@ const options: IBaseModelOptions = {
     populate: ['maintenance'],
     query: (query: any) => {
         const filters: any = {}
-        for (const key in query) {
-            if (key.startsWith('filter[') && key.endsWith(']')) {
-                const field = key.substring(7, key.length - 1) // Extract field name from filter[field] format
-                const value = query[key]
-                if (field === 'color') {
-                    filters[field] = { $regex: new RegExp(value), $options: 'i' } // Treat symbol as regex filter
+        if (query.filter) {
+            for (const [key, value] of Object.entries(query.filter)) {
+                if (['plateNumber', 'brand', 'model', 'color'].includes(key)) {
+                    if (!Array.isArray(filters[key])) {
+                        filters[key] = []
+                    }
+                    filters[key] = { $regex: new RegExp(value as unknown as string), $options: 'i' }
                 }
-                if (field === 'brand') {
-                    filters[field] = { $regex: new RegExp(value), $options: 'i' } // Treat symbol as regex filter
+                if (['year', 'status'].includes(key)) {
+                    filters[key] = value
                 }
             }
         }
-
         return filters
     },
 }
