@@ -127,7 +127,7 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
                     <tbody className="bg-white divide-y divide-gray-200">
                         {maintenanceData.map((item, index) => (
                             <tr key={index}>
-                                {!hideVehicle && (
+                                {!hideVehicle && item.vehicle && (
                                     <td className="px-6 py-4 whitespace-nowrap align-top">
                                         <div>
                                             <span className="text-lg font-bold">{item.vehicle.plateNumber}</span> <br />
