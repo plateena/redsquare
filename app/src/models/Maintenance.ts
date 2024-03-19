@@ -30,15 +30,19 @@ const options: IBaseModelOptions = {
     populate: ['vehicle'],
     query: (query: any) => {
         const filters: any = {}
+        console.log({query})
         for (const key in query) {
+            console.log({key})
             if (key.startsWith('filter[') && key.endsWith(']')) {
                 const field = key.substring(7, key.length - 1) // Extract field name from filter[field] format
                 const value = query[key]
+                console.log({field,value})
                 if (field === 'vehicle') {
                     filters[field] = value
                 }
             }
         }
+        console.log('filter in model',filters)
         return filters
     },
 }

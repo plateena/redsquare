@@ -76,6 +76,7 @@ function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOpt
         if (options?.query) {
             filters = options.query(urlQuery)
         }
+        console.log(filters)
 
         let query = this.find(filters)
 
