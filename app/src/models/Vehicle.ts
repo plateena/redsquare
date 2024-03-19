@@ -1,5 +1,6 @@
-import { Schema, Types } from 'mongoose'
+import { Schema, Types, model } from 'mongoose'
 import BaseModel, { IBaseModelOptions } from './BaseModel'
+import MaintenanceModel from './Maintenance'
 
 // Define the interface for the Vehicle document
 export interface IVehicle {
@@ -46,6 +47,14 @@ const options: IBaseModelOptions = {
         }
         return filters
     },
+}
+
+VehiceSchema.statics.findByIdAndDelete = async function (id: Types.ObjectId): Promise<any> {
+    await MaintenanceModel.deleteMany({ vehicle: id })
+    await this.deleteOne({ _id: id })
+    return {
+        success: true
+    }
 }
 
 export default BaseModel<IVehicle>('Vehicle', VehicleSchema, options)
