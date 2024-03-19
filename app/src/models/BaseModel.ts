@@ -118,14 +118,21 @@ function BaseModel<T>(modelName: string, schema: Schema, options?: IBaseModelOpt
 
         const data = await query.exec()
 
-        return {
+        // Construct the return object conditionally
+        const returnValue: ISearch<T> = {
             status: 'success',
             _filter: JSON.stringify(query.getFilter()),
             _options: query.getOptions(),
             data,
             total,
-            pagination,
         }
+
+        // Include pagination in the return value if it's defined
+        if (urlQuery?.page) {
+            returnValue.pagination = pagination
+        }
+
+        return returnValue
     }
 
     schema.statics.truncate = async function (): Promise<{ status: string; error?: any }> {
