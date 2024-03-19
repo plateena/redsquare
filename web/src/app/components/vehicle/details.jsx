@@ -13,6 +13,7 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
 
     useEffect(() => {
         // Fetch vehicle details
+        if(vehicleId) {
         fetch(`http://localhost:8000/api/v1/vehicle/${vehicleId}`)
             .then((response) => response.json())
             .then((data) => {
@@ -23,6 +24,7 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
                 setSelectedYear(data.year)
             })
             .catch((error) => console.error('Error fetching vehicle details:', error))
+        }
     }, [vehicleId])
 
     // Event handler for selecting brand
@@ -126,8 +128,7 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
                             >
                                 <option value="">Select Model</option>
                                 {selectedBrand &&
-                                    brandModelData.brands
-                                        .find((brand) => brand.name === selectedBrand)
+                                    brandModelData.brands.find((brand) => brand.name === selectedBrand)
                                         .models.map((model) => (
                                             <option key={model} value={model}>
                                                 {model}

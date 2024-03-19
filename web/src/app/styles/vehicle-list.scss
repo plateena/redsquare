@@ -1,0 +1,19 @@
+.vehicle-card {
+    transition: transform 0.2s;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-5px);
+    }
+
+    .edit-icon,
+    .delete-icon {
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    &:hover .edit-icon,
+    &:hover .delete-icon {
+        opacity: 1;
+    }
+}
