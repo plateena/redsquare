@@ -12,7 +12,7 @@ const VehicleDetailsPage = async (req) => {
 
         <Link href={"/maintenance/"+id+"/add"}>Maintenance</Link>
 
-        <MaintenanceList vehicleId={id}/>
+        <MaintenanceList vehicleId={id} hideVehicle={true}/>
         </div>
     );
 };
