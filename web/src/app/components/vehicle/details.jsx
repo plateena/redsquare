@@ -64,7 +64,36 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
 
         if (type == 'edit') {
             editVehicle(formData)
+        } else if (type == 'create') {
+            createVehicle(formData)
         }
+    }
+
+    const createVehicle = (formData) => {
+        return fetch(`http://localhost:8000/api/v1/vehicle`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok')
+                }
+                // Assuming you want to handle the response somehow
+                window.location = "/vehicle"
+                // return response.json()
+            })
+            .then((data) => {
+                console.log('Success:', data)
+                // Do something with the response data if needed
+            })
+            .catch((error) => {
+                console.error('Error:', error)
+                // Handle errors here
+            })
+
     }
 
     const editVehicle = (formData) => {
