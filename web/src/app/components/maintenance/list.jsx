@@ -1,10 +1,12 @@
 'use client'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSort, faSortUp, faSortDown, faPlusCircle, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 import Modal from '../Modal'
 import MaintenanceForm from './form'
 import { formatDateDifference } from '../../util'
+import ConfirmationModal from '../ConfirmModal' // Correct import
+import { apiConfig } from './../../config'
 
 const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
     const [maintenanceData, setMaintenanceData] = useState([])
@@ -13,6 +15,7 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
     const [selectedMaintenanceId, setSelectedMaintenanceId] = useState(null)
     const [selectedVehicleId, setSelectedVehicleId] = useState(vehicleId)
     const [sort, setSort] = useState('asc')
+    const [isConfirmationOpen, setIsConfirmationOpen] = useState(false) // State for confirmation modal
 
     useEffect(() => {
         fetchData()
@@ -52,8 +55,26 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
         openModal()
     }
 
-    const handleDelete = (index) => {
-        console.log('Delete action for index:', index)
+    const handleDelete = (maintenance) => {
+        // Set selected maintenance for deletion
+        setSelectedMaintenanceId(maintenance._id)
+        setIsConfirmationOpen(true) // Open confirmation modal
+    }
+
+    const confirmDelete = async () => {
+        try {
+            const deleteEndpoint = `${apiConfig.url}/maintenance/${selectedMaintenanceId}`
+            const response = await fetch(deleteEndpoint, {
+                method: 'DELETE',
+            })
+            if (!response.ok) {
+                throw new Error('Failed to delete maintenance')
+            }
+            setIsConfirmationOpen(false) // Close confirmation modal
+            fetchData()
+        } catch (error) {
+            console.log('Error deleting maintenance', error)
+        }
     }
 
     return (
@@ -126,7 +147,7 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap align-top">
                                     Status: {item.status}
-                                    <hr/>
+                                    <hr />
                                     <br />
                                     {item.description}
                                     <br />
@@ -141,7 +162,7 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
                                         <FontAwesomeIcon
                                             icon={faTrash}
                                             className="text-red-500 hover:text-red-700 cursor-pointer"
-                                            onClick={() => handleDelete(index)}
+                                            onClick={() => handleDelete(item)}
                                         />
                                     </td>
                                 )}
@@ -158,6 +179,13 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
                     closeModal={closeModal}
                 />
             </Modal>
+
+            <ConfirmationModal
+                isOpen={isConfirmationOpen}
+                onClose={() => setIsConfirmationOpen(false)} // Close confirmation modal
+                onConfirm={confirmDelete}
+                message="Are you sure you want to delete this maintenance?"
+            />
         </div>
     )
 }
