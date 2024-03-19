@@ -1,27 +1,24 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSort, faSortUp, faSortDown, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
+import { faSort, faSortUp, faSortDown, faPlusCircle, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 import Modal from '../Modal'
-import MaintenanceForm from './form' // Assuming you have a MaintenanceForm component
+import MaintenanceForm from './form'
 import { formatDateDifference } from '../../util'
 
-const MaintenanceList = ({ vehicleId, hideVehicle }) => {
+const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
     const [maintenanceData, setMaintenanceData] = useState([])
     const [loading, setLoading] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [sort, setSort] = useState('') // State to track sorting order ('', 'asc', 'desc')
+    const [selectedMaintenanceId, setSelectedMaintenanceId] = useState(null)
+    const [sort, setSort] = useState('')
 
     useEffect(() => {
-        const fetchMaintenanceData = async () => {
+        const fetchData = async () => {
             try {
                 let url = 'http://localhost:8000/api/v1/maintenance?populate=vehicle'
-                if (vehicleId) {
-                    url += `&filter[vehicle]=${vehicleId}`
-                }
-                if (sort) {
-                    url += `&sort=${sort === 'asc' ? 'date' : '-date'}` // Append sorting parameter to URL
-                }
+                if (vehicleId) url += `&filter[vehicle]=${vehicleId}`
+                if (sort) url += `&sort=${sort === 'asc' ? 'date' : '-date'}`
                 const res = await fetch(url)
                 const { data } = await res.json()
                 setMaintenanceData(data)
@@ -31,25 +28,27 @@ const MaintenanceList = ({ vehicleId, hideVehicle }) => {
                 setLoading(false)
             }
         }
-
-        fetchMaintenanceData()
+        fetchData()
     }, [vehicleId, sort])
 
-    const openModal = () => {
-        setIsModalOpen(true)
-    }
-
-    const closeModal = () => {
-        setIsModalOpen(false)
-    }
-
     const handleSort = () => {
-        // Toggle sorting order between 'asc', 'desc', and reset ('')
         setSort((prevSort) => {
             if (prevSort === 'asc') return 'desc'
             if (prevSort === 'desc') return ''
             return 'asc'
         })
+    }
+
+    const openModal = () => setIsModalOpen(true)
+    const closeModal = () => setIsModalOpen(false)
+
+    const handleEdit = (maintenanceId) => {
+        setSelectedMaintenanceId(maintenanceId)
+        openModal()
+    }
+
+    const handleDelete = (index) => {
+        console.log('Delete action for index:', index)
     }
 
     return (
@@ -58,11 +57,9 @@ const MaintenanceList = ({ vehicleId, hideVehicle }) => {
                 Maintenance List{' '}
                 {vehicleId && (
                     <a
-                        id="a-show-modal-add-maintenance"
-                        href={''}
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            e.preventDefault()
+                        href="#"
+                        onClick={() => {
+                            setSelectedMaintenanceId(null)
                             openModal()
                         }}
                     >
@@ -79,30 +76,27 @@ const MaintenanceList = ({ vehicleId, hideVehicle }) => {
                     <thead className="bg-gray-50">
                         <tr>
                             {!hideVehicle && (
-                                <th
-                                    scope="col"
-                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                >
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Vehicle
                                 </th>
                             )}
                             <th
-                                scope="col"
                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                onClick={handleSort} // Handle sorting on click
+                                onClick={handleSort}
                                 style={{ cursor: 'pointer' }}
                             >
                                 Date {sort === 'asc' && <FontAwesomeIcon icon={faSortUp} />}
                                 {sort === 'desc' && <FontAwesomeIcon icon={faSortDown} />}
-                                {sort === '' && <FontAwesomeIcon icon={faSort} />} {/* Default sort icon */}
+                                {sort === '' && <FontAwesomeIcon icon={faSort} />}
                             </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Description
                             </th>
-                            {/* Add more columns if needed */}
+                            {!hideActions && (
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            )}
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -126,16 +120,27 @@ const MaintenanceList = ({ vehicleId, hideVehicle }) => {
                                     {formatDateDifference(item.date)}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap align-top">{item.description}</td>
-                                {/* Add more columns if needed */}
+                                {!hideActions && (
+                                    <td className="px-6 py-4 whitespace-nowrap align-top">
+                                        <FontAwesomeIcon
+                                            icon={faEdit}
+                                            className="text-blue-500 hover:text-blue-700 cursor-pointer mr-2"
+                                            onClick={() => handleEdit(item._id)}
+                                        />
+                                        <FontAwesomeIcon
+                                            icon={faTrash}
+                                            className="text-red-500 hover:text-red-700 cursor-pointer"
+                                            onClick={() => handleDelete(index)}
+                                        />
+                                    </td>
+                                )}
                             </tr>
                         ))}
                     </tbody>
                 </table>
             )}
-
-            {/* Maintenance Form Modal */}
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-                <MaintenanceForm vehicleId={vehicleId} closeModal={closeModal} />
+                <MaintenanceForm vehicleId={vehicleId} maintenanceId={selectedMaintenanceId} closeModal={closeModal} />
             </Modal>
         </div>
     )

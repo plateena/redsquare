@@ -1,12 +1,31 @@
-import { useState } from 'react';
+import { useState } from 'react'
+import VehicleDetails from '../vehicle/details'
 
-const MaintenanceForm = ({ vehicleId, closeModal }) => {
-    const [scheduleDate, setScheduleDate] = useState('');
-    const [description, setDescription] = useState('');
-    const [status, setStatus] = useState('pending');
+const MaintenanceForm = ({ vehicleId, closeModal, maintenanceId }) => {
+    const [scheduleDate, setScheduleDate] = useState('')
+    const [description, setDescription] = useState('')
+    const [status, setStatus] = useState('pending')
+
+    const formatDateDifference = (scheduledDate) => {
+        const currentDate = new Date()
+        const scheduledDateTime = new Date(scheduledDate)
+        const timeDifference = scheduledDateTime.getTime() - currentDate.getTime()
+        const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24))
+
+        if (daysDifference === 0) {
+            return 'today'
+        } else if (daysDifference === 1) {
+            return 'tomorrow'
+        } else if (daysDifference > 1 && daysDifference < 7) {
+            return `in ${daysDifference} days`
+        } else {
+            const monthsDifference = Math.ceil(daysDifference / 30)
+            return `in ${monthsDifference} months`
+        }
+    }
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault()
         try {
             const response = await fetch('http://localhost:8000/api/v1/maintenance', {
                 method: 'POST',
@@ -19,22 +38,23 @@ const MaintenanceForm = ({ vehicleId, closeModal }) => {
                     description: description,
                     status: status,
                 }),
-            });
+            })
             if (!response.ok) {
-                throw new Error('Failed to schedule maintenance');
+                throw new Error('Failed to schedule maintenance')
             }
-            closeModal();
+            closeModal()
             // Reset form fields
-            setScheduleDate('');
-            setDescription('');
-            setStatus('Pending');
+            setScheduleDate('')
+            setDescription('')
+            setStatus('Pending')
         } catch (error) {
-            console.error('Error scheduling maintenance:', error);
+            console.error('Error scheduling maintenance:', error)
         }
-    };
+    }
 
     return (
         <div>
+            {vehicleId && <VehicleDetails vehicleId={vehicleId} />}
             <h3 className="text-lg font-semibold mb-4">Maintenance Form</h3>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
@@ -88,16 +108,13 @@ const MaintenanceForm = ({ vehicleId, closeModal }) => {
                     >
                         Cancel
                     </button>
-                    <button
-                        type="submit"
-                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                    >
+                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
                         Schedule
                     </button>
                 </div>
             </form>
         </div>
-    );
-};
+    )
+}
 
-export default MaintenanceForm;
+export default MaintenanceForm
