@@ -12,12 +12,14 @@ class VehicleFactory extends BaseFactory<IVehicle> {
     // Implement the abstract definition method
     async definition(): Promise<IVehicle> {
         // Define the structure of your data here
+        enum Condition {'poor', 'fair', 'average', 'good', 'great'}
         return {
             plateNumber: faker.vehicle.vrm(),
             color: faker.vehicle.color(),
             brand: faker.vehicle.manufacturer(),
             model: faker.vehicle.model(),
             year: faker.number.int({ max: 2022, min: 1980 }),
+            status: faker.helpers.enumValue(Condition) as unknown as string,
         }
     }
 }

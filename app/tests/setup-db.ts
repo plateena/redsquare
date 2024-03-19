@@ -1,6 +1,6 @@
 import Database from '../src/database'
 
-const database = new Database('mongodb://localhost:27017/redsquare_test')
+const database = new Database('mongodb://mongodb:27017/redsquare_test')
 
 // Before all tests, connect to the database
 beforeAll(async () => {
