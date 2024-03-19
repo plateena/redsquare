@@ -18,7 +18,7 @@ export const MaintenanceSchema = new Schema<IMaintenance>({
     date: { type: Date, required: true },
     status: {
         type: String,
-        enum: ['pending', 'in_progress', 'completed'],
+        enum: ['pending', 'in-progress', 'completed'],
         default: 'pending',
     },
 })
@@ -29,9 +29,17 @@ const options: IBaseModelOptions = {
     defaultSort: '-date', // Default sorting by date in descending order
     populate: ['vehicle'],
     query: (query: any) => {
-        // Implement query logic if needed
-        // This can be similar to what you have in the Vehicle model
-        return {}
+        const filters: any = {}
+        for (const key in query) {
+            if (key.startsWith('filter[') && key.endsWith(']')) {
+                const field = key.substring(7, key.length - 1) // Extract field name from filter[field] format
+                const value = query[key]
+                if (field === 'vehicle') {
+                    filters[field] = value
+                }
+            }
+        }
+        return filters
     },
 }
 
