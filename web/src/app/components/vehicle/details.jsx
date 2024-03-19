@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import brandModelData from '../../../data/brand-model.json'
 import colorData from '../../../data/color.json'
 import { ToastContainer, toast, Bounce } from 'react-toastify'
-import { toastOptions } from '../../config'
+import { apiConfig, toastOptions } from '../../config'
 import 'react-toastify/dist/ReactToastify.css'
 
 const VehicleDetails = ({ vehicleId, type = 'view' }) => {
@@ -18,7 +18,7 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
     useEffect(() => {
         // Fetch vehicle details
         if (vehicleId) {
-            fetch(`http://localhost:8000/api/v1/vehicle/${vehicleId}`)
+            fetch(`${apiConfig.url}/vehicle/${vehicleId}`)
                 .then((response) => response.json())
                 .then((data) => {
                     setVehicle(data)
@@ -33,32 +33,25 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
         }
     }, [vehicleId])
 
-    // Event handler for selecting brand
     const handleBrandChange = (event) => {
         setSelectedBrand(event.target.value)
         setSelectedModel('')
     }
 
-    // Event handler for selecting model
     const handleModelChange = (event) => {
         setSelectedModel(event.target.value)
     }
 
-    // Event handler for selecting color
     const handleColorChange = (event) => {
         setSelectedColor(event.target.value)
     }
 
-    // Event handler for selecting year
     const handleYearChange = (event) => {
         setSelectedYear(event.target.value)
     }
 
-    // Event handler for form submission
     const handleSubmit = (event) => {
         event.preventDefault()
-        // Process form data or make API calls here
-        // Construct the payload
         const formData = {
             brand: selectedBrand,
             model: selectedModel,
@@ -74,8 +67,8 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
         }
     }
 
-    const createVehicle = (formData) => {
-        return fetch(`http://localhost:8000/api/v1/vehicle`, {
+    const createVehicle = async (formData) => {
+        return await fetch(`${apiConfig.url}/vehicle`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -101,7 +94,7 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
     }
 
     const editVehicle = (formData) => {
-        return fetch(`http://localhost:8000/api/v1/vehicle/${vehicleId}`, {
+        return fetch(`${apiConfig.url}/vehicle/${vehicleId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

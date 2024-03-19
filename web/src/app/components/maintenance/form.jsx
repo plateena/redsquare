@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import VehicleDetails from '../vehicle/details'
+import { apiConfig } from '../../config'
 
 const MaintenanceForm = ({ vehicleId, closeModal, maintenanceId, reloadList }) => {
     const [scheduleDate, setScheduleDate] = useState('')
@@ -14,12 +15,12 @@ const MaintenanceForm = ({ vehicleId, closeModal, maintenanceId, reloadList }) =
 
     const fetchMaintenanceData = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/api/v1/maintenance/${maintenanceId}`)
+            const response = await fetch(`${apiConfig.url}/maintenance/${maintenanceId}`)
             if (!response.ok) {
                 throw new Error('Failed to fetch maintenance data')
             }
             const { date: fetchedDate, description, status } = await response.json()
-            const formattedDate = new Date(fetchedDate).toISOString().split('T')[0];
+            const formattedDate = new Date(fetchedDate).toISOString().split('T')[0]
             setScheduleDate(formattedDate)
             setDescription(description)
             setStatus(status)
@@ -31,7 +32,7 @@ const MaintenanceForm = ({ vehicleId, closeModal, maintenanceId, reloadList }) =
     const handleSubmit = async (event) => {
         event.preventDefault()
         try {
-            let apiEndpoint = 'http://localhost:8000/api/v1/maintenance'
+            let apiEndpoint = `${apiConfig.url}/maintenance`
             if (maintenanceId) {
                 apiEndpoint += '/' + maintenanceId
             }

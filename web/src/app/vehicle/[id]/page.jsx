@@ -10,8 +10,6 @@ const VehicleDetailsPage = async (req) => {
         <div>
         <VehicleDetail vehicleId={id} type={type} />
 
-        <Link href={"/maintenance/"+id+"/add"}>Maintenance</Link>
-
         <MaintenanceList vehicleId={id} hideVehicle={true}/>
         </div>
     );

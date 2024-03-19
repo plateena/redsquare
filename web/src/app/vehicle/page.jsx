@@ -1,14 +1,15 @@
 'use client'
-import Link from 'next/link'
-import { ToastContainer, toast, Bounce } from 'react-toastify'
-import { useState, useEffect } from 'react'
-import Modal from './../components/Modal'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
-import VehicleCard from '../components/vehicle/card'
-import { Tooltip as ReactTooltip } from 'react-tooltip'
 import './../styles/vehicle-list.scss'
+import Link from 'next/link'
+import Modal from './../components/Modal'
+import VehicleCard from '../components/vehicle/card'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ToastContainer, toast, Bounce } from 'react-toastify'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
+import { apiConfig } from '../config'
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import { toastOptions } from '../config'
+import { useState, useEffect } from 'react'
 
 const Vehicle = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -19,7 +20,7 @@ const Vehicle = () => {
     // Fetch vehicles from the API
     const fetchVehicles = async () => {
         try {
-            const res = await fetch('http://localhost:8000/api/v1/vehicle')
+            const res = await fetch(`${apiConfig.url}/vehicle`)
             const data = await res.json()
             setVehicles(data.data)
         } catch (error) {
@@ -48,7 +49,7 @@ const Vehicle = () => {
     // Handle the delete action for the selected vehicle
     const handleDelete = async () => {
         try {
-            await fetch(`http://localhost:8000/api/v1/vehicle/${selectedVehicleId}`, {
+            await fetch(`${apiConfig.url}/vehicle/${selectedVehicleId}`, {
                 method: 'DELETE',
             })
             fetchVehicles()

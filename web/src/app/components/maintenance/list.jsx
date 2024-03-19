@@ -5,7 +5,7 @@ import { faSort, faSortUp, faSortDown, faPlusCircle, faEdit, faTrash } from '@fo
 import Modal from '../Modal'
 import MaintenanceForm from './form'
 import { formatDateDifference } from '../../util'
-import ConfirmationModal from '../ConfirmModal' // Correct import
+import ConfirmationModal from '../ConfirmModal'
 import { apiConfig } from './../../config'
 
 const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
@@ -15,7 +15,7 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
     const [selectedMaintenanceId, setSelectedMaintenanceId] = useState(null)
     const [selectedVehicleId, setSelectedVehicleId] = useState(vehicleId)
     const [sort, setSort] = useState('asc')
-    const [isConfirmationOpen, setIsConfirmationOpen] = useState(false) // State for confirmation modal
+    const [isConfirmationOpen, setIsConfirmationOpen] = useState(false)
 
     useEffect(() => {
         fetchData()
@@ -23,7 +23,7 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
 
     const fetchData = async () => {
         try {
-            let url = 'http://localhost:8000/api/v1/maintenance?populate=vehicle'
+            let url = `${apiConfig.url}/maintenance?populate=vehicle`
             if (vehicleId) url += `&filter[vehicle]=${vehicleId}`
             if (sort) url += `&sort=${sort === 'asc' ? 'date' : '-date'}`
             const res = await fetch(url)
@@ -56,9 +56,8 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
     }
 
     const handleDelete = (maintenance) => {
-        // Set selected maintenance for deletion
         setSelectedMaintenanceId(maintenance._id)
-        setIsConfirmationOpen(true) // Open confirmation modal
+        setIsConfirmationOpen(true)
     }
 
     const confirmDelete = async () => {
@@ -70,7 +69,7 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
             if (!response.ok) {
                 throw new Error('Failed to delete maintenance')
             }
-            setIsConfirmationOpen(false) // Close confirmation modal
+            setIsConfirmationOpen(false)
             fetchData()
         } catch (error) {
             console.log('Error deleting maintenance', error)
@@ -182,7 +181,7 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
 
             <ConfirmationModal
                 isOpen={isConfirmationOpen}
-                onClose={() => setIsConfirmationOpen(false)} // Close confirmation modal
+                onClose={() => setIsConfirmationOpen(false)}
                 onConfirm={confirmDelete}
                 message="Are you sure you want to delete this maintenance?"
             />
