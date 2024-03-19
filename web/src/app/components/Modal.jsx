@@ -1,6 +1,3 @@
-// Modal.js
-import { useState } from 'react';
-
 const Modal = ({ isOpen, onClose, children }) => {
     return (
         <>
@@ -8,7 +5,7 @@ const Modal = ({ isOpen, onClose, children }) => {
             {isOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                     {/* Modal */}
-                    <div className="bg-white p-4 rounded shadow-lg w-1/2">
+                    <div className="bg-white p-4 rounded shadow-lg w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4">
                         {/* Close button */}
                         <button onClick={onClose} className="absolute top-0 right-0 p-2">
                             <svg className="h-6 w-6 text-gray-600 hover:text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">

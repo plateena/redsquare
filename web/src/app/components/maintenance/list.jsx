@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSort, faSortUp, faSortDown, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faSort, faSortUp, faSortDown, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import Modal from '../Modal';
 import MaintenanceForm from './form'; // Assuming you have a MaintenanceForm component
 import { formatDateDifference } from '../../util';
@@ -62,7 +62,7 @@ const MaintenanceList = ({ vehicleId, hideVehicle }) => {
                         openModal();
                     }}
                 >
-                    <FontAwesomeIcon icon={faPlus} size="sm" className="text-blue-500 hover:text-blue-700" />
+                    <FontAwesomeIcon icon={faPlusCircle} size="sm" className="text-blue-500 hover:text-blue-700" />
                 </a>
             </h2>
             {loading ? (

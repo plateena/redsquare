@@ -4,7 +4,7 @@ import { ToastContainer, toast, Bounce } from 'react-toastify'
 import { useState, useEffect } from 'react'
 import Modal from './../components/Modal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import VehicleCard from '../components/vehicle/card'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import './../styles/vehicle-list.scss'
@@ -70,7 +70,7 @@ const Vehicle = () => {
                         data-tooltip-content="Create New Vehicle"
                         className="ml-2 cursor-pointer"
                     >
-                        <FontAwesomeIcon icon={faPlus} size="sm" className="text-blue-500 hover:text-blue-700" />
+                        <FontAwesomeIcon icon={faPlusCircle} size="sm" className="text-blue-500 hover:text-blue-700" />
                     </span>
                 </Link>
                 <ReactTooltip id="create-new-tooltip" />
