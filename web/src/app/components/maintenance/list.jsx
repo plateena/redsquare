@@ -30,7 +30,7 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
         try {
             let url = `${apiConfig.url}/maintenance?populate=vehicle`
             if (vehicleId) url += `&filter[vehicle]=${vehicleId}`
-            if (searchPlate) url += `&filter[vehiclePlateNumber]=${encodeURIComponent(searchPlate)}`;
+            if (searchPlate) url += `&filter[vehiclePlateNumber]=${encodeURIComponent(searchPlate)}`
             if (sort) url += `&sort=${sort === 'asc' ? 'date' : '-date'}`
             const res = await fetch(url)
             const { data } = await res.json()
@@ -90,10 +90,10 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
     }
 
     return (
-        <div>
-            <h2 className="font-bold my-6">
-                Maintenance List{' '}
-                {vehicleId && (
+        <div className="container mx-auto">
+            {vehicleId ? (
+                <h2 className="font-bold my-6">
+                    Maintenance List{' '}
                     <a
                         href="#"
                         onClick={() => {
@@ -103,53 +103,65 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
                     >
                         <FontAwesomeIcon icon={faPlusCircle} size="sm" className="text-blue-500 hover:text-blue-700" />
                     </a>
-                )}
-            </h2>
-        {!hideVehicle && (<div className="flex items-center mb-4">
-                <FontAwesomeIcon icon={faSearch} className="text-gray-500 mr-2" />
-                <input
-                    type="text"
-                    placeholder="Search by Plate Number"
-                    value={searchPlate}
-                    onChange={(e) => setSearchPlate(e.target.value)}
-                    className="border border-gray-300 px-3 py-2 rounded-md w-full max-w-md"
-                />
-            </div>)}
-            {loading ? (
-                <p>Loading...</p>
-            ) : maintenanceData.length === 0 ? (
-                <p>No maintenance data found for this vehicle.</p>
+                </h2>
             ) : (
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                {!hideVehicle && (
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Vehicle
-                                    </th>
-                                )}
-                                <th
-                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                    onClick={handleSort}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    Schedule Date {sort === 'asc' && <FontAwesomeIcon icon={faSortUp} />}
-                                    {sort === 'desc' && <FontAwesomeIcon icon={faSortDown} />}
-                                    {sort === '' && <FontAwesomeIcon icon={faSort} />}
-                                </th>
+                <h1 className="text-3xl font-bold my-6">Maintenance List</h1>
+            )}
+            {!hideVehicle && (
+                <div className="flex items-center mb-4">
+                    <FontAwesomeIcon icon={faSearch} className="text-gray-500 mr-2" />
+                    <input
+                        type="text"
+                        placeholder="Search by Plate Number"
+                        value={searchPlate}
+                        onChange={(e) => setSearchPlate(e.target.value)}
+                        className="border border-gray-300 px-3 py-2 rounded-md w-full max-w-md"
+                    />
+                </div>
+            )}
+            <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                        <tr>
+                            {!hideVehicle && (
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Description
+                                    Vehicle
                                 </th>
-                                {!hideActions && (
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions
-                                    </th>
-                                )}
+                            )}
+                            <th
+                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                onClick={handleSort}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                Schedule Date {sort === 'asc' && <FontAwesomeIcon icon={faSortUp} />}
+                                {sort === 'desc' && <FontAwesomeIcon icon={faSortDown} />}
+                                {sort === '' && <FontAwesomeIcon icon={faSort} />}
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Description
+                            </th>
+                            {!hideActions && (
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            )}
+                        </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                        {loading ? (
+                            <tr>
+                                <td colSpan={!hideActions ? 4 : 3} className="px-6 py-4 whitespace-nowrap text-center">
+                                    Loading...
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {maintenanceData.map((item, index) => (
+                        ) : maintenanceData.length === 0 ? (
+                            <tr>
+                                <td colSpan={!hideActions ? 4 : 3} className="px-6 py-4 whitespace-nowrap text-center">
+                                    No maintenance data found for this vehicle.
+                                </td>
+                            </tr>
+                        ) : (
+                            maintenanceData.map((item, index) => (
                                 <tr key={index}>
                                     {!hideVehicle && item.vehicle && (
                                         <td className="px-6 py-4 whitespace-nowrap align-top">
@@ -197,11 +209,11 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
                                         </td>
                                     )}
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
             <Modal isOpen={isModalOpen} onClose={closeModal}>
                 <MaintenanceForm
                     reloadList={fetchData}
