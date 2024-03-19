@@ -28,6 +28,8 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
                     setSelectedYear(data.year)
                 })
                 .catch((error) => console.error('Error fetching vehicle details:', error))
+        } else {
+            console.log('no vehicleId', vehicleId)
         }
     }, [vehicleId])
 

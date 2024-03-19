@@ -1,33 +1,41 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import VehicleDetails from '../vehicle/details'
 
-const MaintenanceForm = ({ vehicleId, closeModal, maintenanceId }) => {
+const MaintenanceForm = ({ vehicleId, closeModal, maintenanceId, reloadList }) => {
     const [scheduleDate, setScheduleDate] = useState('')
     const [description, setDescription] = useState('')
     const [status, setStatus] = useState('pending')
 
-    const formatDateDifference = (scheduledDate) => {
-        const currentDate = new Date()
-        const scheduledDateTime = new Date(scheduledDate)
-        const timeDifference = scheduledDateTime.getTime() - currentDate.getTime()
-        const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24))
+    useEffect(() => {
+        if (maintenanceId) {
+            fetchMaintenanceData()
+        }
+    }, [maintenanceId])
 
-        if (daysDifference === 0) {
-            return 'today'
-        } else if (daysDifference === 1) {
-            return 'tomorrow'
-        } else if (daysDifference > 1 && daysDifference < 7) {
-            return `in ${daysDifference} days`
-        } else {
-            const monthsDifference = Math.ceil(daysDifference / 30)
-            return `in ${monthsDifference} months`
+    const fetchMaintenanceData = async () => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/v1/maintenance/${maintenanceId}`)
+            if (!response.ok) {
+                throw new Error('Failed to fetch maintenance data')
+            }
+            const { date: fetchedDate, description, status } = await response.json()
+            const formattedDate = new Date(fetchedDate).toISOString().split('T')[0];
+            setScheduleDate(formattedDate)
+            setDescription(description)
+            setStatus(status)
+        } catch (error) {
+            console.error('Error fetching maintenance data:', error)
         }
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault()
         try {
-            const response = await fetch('http://localhost:8000/api/v1/maintenance', {
+            let apiEndpoint = 'http://localhost:8000/api/v1/maintenance'
+            if (maintenanceId) {
+                apiEndpoint += '/' + maintenanceId
+            }
+            const response = await fetch(apiEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,6 +51,7 @@ const MaintenanceForm = ({ vehicleId, closeModal, maintenanceId }) => {
                 throw new Error('Failed to schedule maintenance')
             }
             closeModal()
+            reloadList()
             // Reset form fields
             setScheduleDate('')
             setDescription('')
@@ -54,7 +63,7 @@ const MaintenanceForm = ({ vehicleId, closeModal, maintenanceId }) => {
 
     return (
         <div>
-            {vehicleId && <VehicleDetails vehicleId={vehicleId} />}
+            <VehicleDetails vehicleId={vehicleId} />
             <h3 className="text-lg font-semibold mb-4">Maintenance Form</h3>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
@@ -109,7 +118,7 @@ const MaintenanceForm = ({ vehicleId, closeModal, maintenanceId }) => {
                         Cancel
                     </button>
                     <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                        Schedule
+                        {maintenanceId ? 'Update' : 'Schedule'}
                     </button>
                 </div>
             </form>

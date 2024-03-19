@@ -11,25 +11,27 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
     const [loading, setLoading] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedMaintenanceId, setSelectedMaintenanceId] = useState(null)
-    const [sort, setSort] = useState('')
+    const [selectedVehicleId, setSelectedVehicleId] = useState(vehicleId)
+    const [sort, setSort] = useState('asc')
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                let url = 'http://localhost:8000/api/v1/maintenance?populate=vehicle'
-                if (vehicleId) url += `&filter[vehicle]=${vehicleId}`
-                if (sort) url += `&sort=${sort === 'asc' ? 'date' : '-date'}`
-                const res = await fetch(url)
-                const { data } = await res.json()
-                setMaintenanceData(data)
-                setLoading(false)
-            } catch (error) {
-                console.error('Error fetching maintenance data:', error)
-                setLoading(false)
-            }
-        }
         fetchData()
     }, [vehicleId, sort])
+
+    const fetchData = async () => {
+        try {
+            let url = 'http://localhost:8000/api/v1/maintenance?populate=vehicle'
+            if (vehicleId) url += `&filter[vehicle]=${vehicleId}`
+            if (sort) url += `&sort=${sort === 'asc' ? 'date' : '-date'}`
+            const res = await fetch(url)
+            const { data } = await res.json()
+            setMaintenanceData(data)
+            setLoading(false)
+        } catch (error) {
+            console.error('Error fetching maintenance data:', error)
+            setLoading(false)
+        }
+    }
 
     const handleSort = () => {
         setSort((prevSort) => {
@@ -42,8 +44,11 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
     const openModal = () => setIsModalOpen(true)
     const closeModal = () => setIsModalOpen(false)
 
-    const handleEdit = (maintenanceId) => {
-        setSelectedMaintenanceId(maintenanceId)
+    const handleEdit = (maintenance) => {
+        const { _id, vehicle } = maintenance
+        setSelectedMaintenanceId(_id)
+        const { _id: vehicleId } = vehicle
+        setSelectedVehicleId(vehicleId)
         openModal()
     }
 
@@ -119,13 +124,19 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
                                 <td className="px-6 py-4 whitespace-nowrap align-top">
                                     {formatDateDifference(item.date)}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap align-top">{item.description}</td>
+                                <td className="px-6 py-4 whitespace-nowrap align-top">
+                                    Status: {item.status}
+                                    <hr/>
+                                    <br />
+                                    {item.description}
+                                    <br />
+                                </td>
                                 {!hideActions && (
                                     <td className="px-6 py-4 whitespace-nowrap align-top">
                                         <FontAwesomeIcon
                                             icon={faEdit}
                                             className="text-blue-500 hover:text-blue-700 cursor-pointer mr-2"
-                                            onClick={() => handleEdit(item._id)}
+                                            onClick={() => handleEdit(item)}
                                         />
                                         <FontAwesomeIcon
                                             icon={faTrash}
@@ -140,7 +151,12 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
                 </table>
             )}
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-                <MaintenanceForm vehicleId={vehicleId} maintenanceId={selectedMaintenanceId} closeModal={closeModal} />
+                <MaintenanceForm
+                    reloadList={fetchData}
+                    vehicleId={selectedVehicleId}
+                    maintenanceId={selectedMaintenanceId}
+                    closeModal={closeModal}
+                />
             </Modal>
         </div>
     )
