@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faCar, faWrench } from '@fortawesome/free-solid-svg-icons'
+import 'react-toastify/dist/ReactToastify.css'
 
 const Header = () => {
     return (

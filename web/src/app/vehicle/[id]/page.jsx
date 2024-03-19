@@ -8,9 +8,9 @@ const VehicleDetailsPage = async (req) => {
 
     return (
         <div>
-        <VehicleDetail vehicleId={id} type={type} />
+            <VehicleDetail vehicleId={id} type={type} />
 
-        <MaintenanceList vehicleId={id} hideVehicle={true}/>
+            <MaintenanceList vehicleId={id} hideVehicle={true}/>
         </div>
     );
 };

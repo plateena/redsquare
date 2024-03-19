@@ -1,4 +1,4 @@
-'use client'
+"use client"
 import './../styles/vehicle-list.scss'
 import Link from 'next/link'
 import Modal from './../components/Modal'
@@ -10,12 +10,14 @@ import { apiConfig } from '../config'
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import { toastOptions } from '../config'
 import { useState, useEffect } from 'react'
+import ConfirmationModal from '../components/ConfirmModal'
 
 const Vehicle = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [selectedVehicleId, setSelectedVehicleId] = useState(null)
     const [vehicles, setVehicles] = useState([])
     const [loading, setLoading] = useState(true)
+    const [isConfirmationOpen, setIsConfirmationOpen] = useState(false)
 
     // Fetch vehicles from the API
     const fetchVehicles = async () => {
@@ -35,14 +37,14 @@ const Vehicle = () => {
     }, [])
 
     // Open the deletion modal for the selected vehicle
-    const openModal = (vehicleId) => {
-        setIsOpen(true)
+    const openConfirmationModal = (vehicleId) => {
         setSelectedVehicleId(vehicleId)
+        setIsConfirmationOpen(true)
     }
 
-    // Close the deletion modal
-    const closeModal = () => {
-        setIsOpen(false)
+    // Close the confirmation modal
+    const closeConfirmationModal = () => {
+        setIsConfirmationOpen(false)
         setSelectedVehicleId(null)
     }
 
@@ -57,7 +59,7 @@ const Vehicle = () => {
         } catch (error) {
             console.error('Error deleting vehicle:', error)
         } finally {
-            closeModal()
+            closeConfirmationModal()
         }
     }
 
@@ -90,7 +92,7 @@ const Vehicle = () => {
                                     onClick={() => (window.location.href = `/vehicle/${vehicle._id}`)}
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    <VehicleCard vehicle={vehicle} openModal={openModal} />
+                                    <VehicleCard vehicle={vehicle} openModal={openConfirmationModal} />
                                 </div>
                             ))}
                         </div>
@@ -99,26 +101,12 @@ const Vehicle = () => {
             )}
 
             {/* Confirmation Modal */}
-            <Modal isOpen={isOpen} onClose={closeModal}>
-                <div className="bg-white rounded-lg p-8">
-                    <h1 className="text-2xl font-bold mb-4">Confirm Deletion</h1>
-                    <p>Are you sure you want to delete this vehicle?</p>
-                    <div className="mt-6 flex justify-center">
-                        <button
-                            onClick={handleDelete}
-                            className="bg-red-500 text-white px-4 py-2 rounded-md mr-2 hover:bg-red-600"
-                        >
-                            Confirm
-                        </button>
-                        <button
-                            onClick={closeModal}
-                            className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            </Modal>
+            <ConfirmationModal
+                isOpen={isConfirmationOpen}
+                onClose={closeConfirmationModal}
+                onConfirm={handleDelete}
+                message="Are you sure you want to delete this vehicle?"
+            />
 
             <ToastContainer />
         </div>

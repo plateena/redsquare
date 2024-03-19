@@ -4,7 +4,6 @@ import brandModelData from '../../../data/brand-model.json'
 import colorData from '../../../data/color.json'
 import { ToastContainer, toast, Bounce } from 'react-toastify'
 import { apiConfig, toastOptions } from '../../config'
-import 'react-toastify/dist/ReactToastify.css'
 
 const VehicleDetails = ({ vehicleId, type = 'view' }) => {
     const [vehicle, setVehicle] = useState(null)
@@ -13,6 +12,7 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
     const [selectedColor, setSelectedColor] = useState('')
     const [selectedYear, setSelectedYear] = useState('')
     const [editSuccess, setEditSuccess] = useState(false)
+    const [selectedStatus, setSelectedStatus] = useState('')
     const currentYear = new Date().getFullYear()
 
     useEffect(() => {
@@ -26,6 +26,7 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
                     setSelectedModel(data.model)
                     setSelectedColor(data.color)
                     setSelectedYear(data.year)
+                    setSelectedStatus(data.status)
                 })
                 .catch((error) => console.error('Error fetching vehicle details:', error))
         } else {
@@ -57,6 +58,7 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
             model: selectedModel,
             color: selectedColor,
             year: selectedYear,
+            status: selectedStatus,
             plateNumber: vehicle ? vehicle.plateNumber : '',
         }
 
@@ -216,6 +218,23 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
                                     setVehicle((prevState) => ({ ...prevState, plateNumber: event.target.value }))
                                 }
                             />
+                        </div>
+                        {/* Status selection */}
+                        <div className="col-span-2 sm:col-span-1">
+                            <p className="text-lg font-semibold">Status:</p>
+                            <select
+                                className="border border-gray-300 px-3 py-2 w-full rounded-md"
+                                disabled={type === 'view'}
+                                value={selectedStatus}
+                                onChange={(event) => setSelectedStatus(event.target.value)}
+                            >
+                                <option value="">Select Status</option>
+                                {['poor', 'fair', 'average', 'good', 'great'].map((status) => (
+                                    <option key={status} value={status}>
+                                        {status}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
                     {/* Submit button */}

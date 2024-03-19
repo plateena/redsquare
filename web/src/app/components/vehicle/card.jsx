@@ -3,6 +3,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
 const VehicleCard = ({ vehicle, openModal }) => {
+    let backgroundColor = '';
+    switch (vehicle.status) {
+        case 'poor':
+            backgroundColor = 'bg-red-100';
+            break;
+        case 'fair':
+            backgroundColor = 'bg-yellow-100';
+            break;
+        case 'average':
+            backgroundColor = 'bg-blue-100';
+            break;
+        case 'good':
+            backgroundColor = 'bg-green-100';
+            break;
+        case 'great':
+            backgroundColor = 'bg-purple-100';
+            break;
+        default:
+            backgroundColor = 'bg-gray-100';
+    }
+
     const handleEditClick = (e) => {
         e.stopPropagation()
     }
@@ -15,9 +36,11 @@ const VehicleCard = ({ vehicle, openModal }) => {
 
     return (
         <Link href={`/vehicle/${vehicle._id}`} passHref>
-            <div className="vehicle-card bg-white shadow-md rounded-md p-4 relative cursor-pointer">
+            <div className={`vehicle-card bg-white shadow-md rounded-md p-4 relative cursor-pointer ${backgroundColor}`}>
                 <div className="flex justify-between mb-2">
-                    <h2 className="text-lg font-semibold">{vehicle.plateNumber}</h2>
+                    <h2 className="text-lg font-semibold">
+                        {vehicle.plateNumber} <span className="text-[0.7em] text-gray-900 px-1">{`( ${vehicle.status} )`}</span>
+                    </h2>
                     <div className="flex">
                         <Link href={`/vehicle/${vehicle._id}/edit`} passHref>
                             <span
