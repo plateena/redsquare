@@ -2,78 +2,83 @@
 import Link from 'next/link'
 import { ToastContainer, toast, Bounce } from 'react-toastify'
 import { useState, useEffect } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPencilAlt, faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons'
 import Modal from './../components/Modal'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import VehicleCard from '../components/vehicle/card'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import './../styles/vehicle-list.scss'
 
 const Vehicle = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedVehicleId, setSelectedVehicleId] = useState(null);
-    const [vehicles, setVehicles] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [isOpen, setIsOpen] = useState(false)
+    const [selectedVehicleId, setSelectedVehicleId] = useState(null)
+    const [vehicles, setVehicles] = useState([])
+    const [loading, setLoading] = useState(true)
 
     // Fetch vehicles from the API
     const fetchVehicles = async () => {
         try {
-            const res = await fetch('http://localhost:8000/api/v1/vehicle');
-            const data = await res.json();
-            setVehicles(data.data);
+            const res = await fetch('http://localhost:8000/api/v1/vehicle')
+            const data = await res.json()
+            setVehicles(data.data)
         } catch (error) {
-            console.error('Error fetching vehicles:', error);
+            console.error('Error fetching vehicles:', error)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
     useEffect(() => {
-        fetchVehicles();
-    }, []);
+        fetchVehicles()
+    }, [])
 
     // Open the deletion modal for the selected vehicle
     const openModal = (vehicleId) => {
-        setIsOpen(true);
-        setSelectedVehicleId(vehicleId);
-    };
+        setIsOpen(true)
+        setSelectedVehicleId(vehicleId)
+    }
 
     // Close the deletion modal
     const closeModal = () => {
-        setIsOpen(false);
-        setSelectedVehicleId(null);
-    };
+        setIsOpen(false)
+        setSelectedVehicleId(null)
+    }
 
     // Handle the delete action for the selected vehicle
     const handleDelete = async () => {
         try {
             await fetch(`http://localhost:8000/api/v1/vehicle/${selectedVehicleId}`, {
                 method: 'DELETE',
-            });
-            fetchVehicles();
+            })
+            fetchVehicles()
             toast.success('Delete successful!', {
-                position: "top-right",
+                position: 'top-right',
                 autoClose: 5000,
                 hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
-                theme: "colored",
+                theme: 'colored',
                 transition: Bounce,
             })
         } catch (error) {
-            console.error('Error deleting vehicle:', error);
+            console.error('Error deleting vehicle:', error)
         } finally {
-            closeModal();
+            closeModal()
         }
-    };
+    }
 
     return (
         <div className="container mx-auto">
             <h1 className="text-3xl font-bold my-6">
                 Vehicle List
                 <Link href="/vehicle/new" passHref>
-                    <span data-tooltip-id="create-new-tooltip" data-tooltip-content="Create New Vehicle" className="ml-2 cursor-pointer">
+                    <span
+                        data-tooltip-id="create-new-tooltip"
+                        data-tooltip-content="Create New Vehicle"
+                        className="ml-2 cursor-pointer"
+                    >
                         <FontAwesomeIcon icon={faPlus} size="sm" className="text-blue-500 hover:text-blue-700" />
                     </span>
                 </Link>
@@ -88,35 +93,12 @@ const Vehicle = () => {
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {vehicles.map((vehicle, index) => (
-                                <div key={index} onClick={() => window.location.href=`/vehicle/${vehicle._id}`} style={{ cursor: 'pointer' }}>
-                                    <div className="vehicle-card bg-white shadow-md rounded-md p-4 relative">
-                                        <div className="flex justify-between mb-2">
-                                            <h2 className="text-lg font-semibold">{vehicle.plateNumber}</h2>
-                                            <div className="flex">
-                                                <span className="edit-icon text-gray-600 hover:text-gray-900 cursor-pointer ml-2" onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    window.location.href = `/vehicle/${vehicle._id}/edit`;
-                                                }}>
-                                                    <FontAwesomeIcon icon={faPencilAlt} size={'lg'} />
-                                                </span>
-                                                <span className="delete-icon text-red-600 hover:text-red-900 cursor-pointer ml-2">
-                                                    <FontAwesomeIcon
-                                                        icon={faTrashAlt}
-                                                        size={'lg'}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            openModal(vehicle._id);
-                                                        }}
-                                                    />
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <p className="text-sm text-gray-600 mb-1">
-                                            {vehicle.brand} - {vehicle.model}
-                                        </p>
-                                        <p className="text-sm text-gray-600 mb-1">{vehicle.color}</p>
-                                        <p className="text-sm text-gray-600 mb-1">{vehicle.year}</p>
-                                    </div>
+                                <div
+                                    key={index}
+                                    onClick={() => (window.location.href = `/vehicle/${vehicle._id}`)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <VehicleCard vehicle={vehicle} openModal={openModal} />
                                 </div>
                             ))}
                         </div>
@@ -148,7 +130,7 @@ const Vehicle = () => {
 
             <ToastContainer />
         </div>
-    );
-};
+    )
+}
 
-export default Vehicle;
+export default Vehicle
