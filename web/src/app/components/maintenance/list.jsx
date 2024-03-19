@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSort, faSortUp, faSortDown, faPlusCircle, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 import Modal from '../Modal'
 import MaintenanceForm from './form'
-import { formatDateDifference } from '../../util'
+import { formatDateDifference, formatDate } from '../../util'
 import ConfirmationModal from '../ConfirmModal'
 import { apiConfig } from './../../config'
 
@@ -97,78 +97,87 @@ const MaintenanceList = ({ vehicleId, hideVehicle, hideActions }) => {
             ) : maintenanceData.length === 0 ? (
                 <p>No maintenance data found for this vehicle.</p>
             ) : (
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            {!hideVehicle && (
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Vehicle
-                                </th>
-                            )}
-                            <th
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                onClick={handleSort}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                Date {sort === 'asc' && <FontAwesomeIcon icon={faSortUp} />}
-                                {sort === 'desc' && <FontAwesomeIcon icon={faSortDown} />}
-                                {sort === '' && <FontAwesomeIcon icon={faSort} />}
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Description
-                            </th>
-                            {!hideActions && (
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions
-                                </th>
-                            )}
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {maintenanceData.map((item, index) => (
-                            <tr key={index}>
-                                {!hideVehicle && item.vehicle && (
-                                    <td className="px-6 py-4 whitespace-nowrap align-top">
-                                        <div>
-                                            <span className="text-lg font-bold">{item.vehicle.plateNumber}</span> <br />
-                                            <span>
-                                                {item.vehicle.brand} - {item.vehicle.model}
-                                            </span>{' '}
-                                            <br />
-                                            <span>
-                                                {item.vehicle.year} | {item.vehicle.color}
-                                            </span>
-                                        </div>
-                                    </td>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                {!hideVehicle && (
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Vehicle
+                                    </th>
                                 )}
-                                <td className="px-6 py-4 whitespace-nowrap align-top">
-                                    {formatDateDifference(item.date)}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap align-top">
-                                    Status: {item.status}
-                                    <hr />
-                                    <br />
-                                    {item.description}
-                                    <br />
-                                </td>
+                                <th
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    onClick={handleSort}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    Schedule Date {sort === 'asc' && <FontAwesomeIcon icon={faSortUp} />}
+                                    {sort === 'desc' && <FontAwesomeIcon icon={faSortDown} />}
+                                    {sort === '' && <FontAwesomeIcon icon={faSort} />}
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Description
+                                </th>
                                 {!hideActions && (
-                                    <td className="px-6 py-4 whitespace-nowrap align-top">
-                                        <FontAwesomeIcon
-                                            icon={faEdit}
-                                            className="text-blue-500 hover:text-blue-700 cursor-pointer mr-2"
-                                            onClick={() => handleEdit(item)}
-                                        />
-                                        <FontAwesomeIcon
-                                            icon={faTrash}
-                                            className="text-red-500 hover:text-red-700 cursor-pointer"
-                                            onClick={() => handleDelete(item)}
-                                        />
-                                    </td>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Actions
+                                    </th>
                                 )}
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {maintenanceData.map((item, index) => (
+                                <tr key={index}>
+                                    {!hideVehicle && item.vehicle && (
+                                        <td className="px-6 py-4 whitespace-nowrap align-top">
+                                            <div>
+                                                <span className="text-lg font-bold">{item.vehicle.plateNumber}</span>{' '}
+                                                <br />
+                                                <span>
+                                                    {item.vehicle.brand} - {item.vehicle.model}
+                                                </span>{' '}
+                                                <br />
+                                                <span>
+                                                    {item.vehicle.year} | {item.vehicle.color}
+                                                </span>
+                                            </div>
+                                        </td>
+                                    )}
+                                    <td className="px-6 py-4 whitespace-nowrap align-top">
+                                        <div>
+                                            {formatDateDifference(item.date)} <br />
+                                            <span className="text-gray-400 text-sm">{`(${formatDate(
+                                                item.date
+                                            )})`}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap align-top">
+                                        Status: {item.status}
+                                        <hr className="pb-2" />
+                                        {item.description}
+                                        <br />
+                                    </td>
+                                    {!hideActions && (
+                                        <td className="px-6 py-4 whitespace-nowrap align-top text-center">
+                                            <FontAwesomeIcon
+                                                icon={faEdit}
+                                                className="text-blue-500 hover:text-blue-700 cursor-pointer mr-2"
+                                                size={'sm'}
+                                                onClick={() => handleEdit(item)}
+                                            />
+                                            <FontAwesomeIcon
+                                                icon={faTrash}
+                                                className="text-red-500 hover:text-red-700 cursor-pointer"
+                                                size={'sm'}
+                                                onClick={() => handleDelete(item)}
+                                            />
+                                        </td>
+                                    )}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
             <Modal isOpen={isModalOpen} onClose={closeModal}>
                 <MaintenanceForm
