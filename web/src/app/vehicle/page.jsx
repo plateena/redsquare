@@ -1,83 +1,103 @@
 "use client"
-import './../styles/vehicle-list.scss'
-import Link from 'next/link'
-import Modal from './../components/Modal'
-import VehicleCard from '../components/vehicle/card'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ToastContainer, toast, Bounce } from 'react-toastify'
-import { Tooltip as ReactTooltip } from 'react-tooltip'
-import { apiConfig } from '../config'
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
-import { toastOptions } from '../config'
-import { useState, useEffect } from 'react'
-import ConfirmationModal from '../components/ConfirmModal'
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { ToastContainer, toast } from 'react-toastify';
+import { apiConfig } from '../config';
+import VehicleCard from '../components/vehicle/card';
+import ConfirmationModal from '../components/ConfirmModal';
 
 const Vehicle = () => {
-    const [isOpen, setIsOpen] = useState(false)
-    const [selectedVehicleId, setSelectedVehicleId] = useState(null)
-    const [vehicles, setVehicles] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [isConfirmationOpen, setIsConfirmationOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedVehicleId, setSelectedVehicleId] = useState(null);
+    const [vehicles, setVehicles] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchPlate, setSearchPlate] = useState('');
+    const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
 
-    // Fetch vehicles from the API
-    const fetchVehicles = async () => {
+    // Function to debounce search input changes
+    const debounce = (func, delay) => {
+        let timeoutId;
+        return function (...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(this, args), delay);
+        };
+    };
+
+    // Function to fetch vehicles
+    const fetchVehicles = async (searchQuery) => {
         try {
-            const res = await fetch(`${apiConfig.url}/vehicle`)
-            const data = await res.json()
-            setVehicles(data.data)
+            let endpoint = `${apiConfig.url}/vehicle`;
+            if (searchQuery) {
+                endpoint += `?filter[plateNumber]=${encodeURIComponent(searchQuery)}`;
+            }
+            const res = await fetch(endpoint);
+            const data = await res.json();
+            setVehicles(data.data);
         } catch (error) {
-            console.error('Error fetching vehicles:', error)
+            console.error('Error fetching vehicles:', error);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
+    // Debounce the fetchVehicles function with a delay of 500 milliseconds
+    const debouncedFetchVehicles = debounce(fetchVehicles, 500);
+
+    // Effect to fetch vehicles when searchPlate changes
     useEffect(() => {
-        fetchVehicles()
-    }, [])
+        setLoading(true); // Set loading to true when fetching data
+        debouncedFetchVehicles(searchPlate); // Call debouncedFetchVehicles with the current searchPlate
+    }, [searchPlate]);
 
     // Open the deletion modal for the selected vehicle
     const openConfirmationModal = (vehicleId) => {
-        setSelectedVehicleId(vehicleId)
-        setIsConfirmationOpen(true)
-    }
+        setSelectedVehicleId(vehicleId);
+        setIsConfirmationOpen(true);
+    };
 
     // Close the confirmation modal
     const closeConfirmationModal = () => {
-        setIsConfirmationOpen(false)
-        setSelectedVehicleId(null)
-    }
+        setIsConfirmationOpen(false);
+        setSelectedVehicleId(null);
+    };
 
     // Handle the delete action for the selected vehicle
     const handleDelete = async () => {
         try {
             await fetch(`${apiConfig.url}/vehicle/${selectedVehicleId}`, {
                 method: 'DELETE',
-            })
-            fetchVehicles()
-            toast.success('Delete successful!', toastOptions)
+            });
+            fetchVehicles(searchPlate); // Re-fetch vehicles with the current search query
+            toast.success('Delete successful!');
         } catch (error) {
-            console.error('Error deleting vehicle:', error)
+            console.error('Error deleting vehicle:', error);
         } finally {
-            closeConfirmationModal()
+            closeConfirmationModal();
         }
-    }
+    };
 
     return (
         <div className="container mx-auto">
             <h1 className="text-3xl font-bold my-6">
                 Vehicle List
                 <Link href="/vehicle/new" passHref>
-                    <span
-                        data-tooltip-id="create-new-tooltip"
-                        data-tooltip-content="Create New Vehicle"
-                        className="ml-2 cursor-pointer"
-                    >
+                    <span className="ml-2 cursor-pointer">
                         <FontAwesomeIcon icon={faPlusCircle} size="sm" className="text-blue-500 hover:text-blue-700" />
                     </span>
                 </Link>
-                <ReactTooltip id="create-new-tooltip" />
             </h1>
+            <div className="flex items-center mb-4">
+                <FontAwesomeIcon icon={faSearch} className="text-gray-500 mr-2" />
+                <input
+                    type="text"
+                    placeholder="Search by Plate Number"
+                    value={searchPlate}
+                    onChange={(e) => setSearchPlate(e.target.value)}
+                    className="border border-gray-300 px-3 py-2 rounded-md w-full max-w-md"
+                />
+            </div>
             {loading ? (
                 <p>Loading...</p>
             ) : (
@@ -110,7 +130,7 @@ const Vehicle = () => {
 
             <ToastContainer />
         </div>
-    )
-}
+    );
+};
 
-export default Vehicle
+export default Vehicle;
