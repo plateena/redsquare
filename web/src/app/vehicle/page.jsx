@@ -1,34 +1,59 @@
-'use client'
-import Link from 'next/link'
-import { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFileLines } from '@fortawesome/free-regular-svg-icons'
-import { faPencil, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import Modal from './../components/Modal'
+"use client"
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileLines } from '@fortawesome/free-regular-svg-icons';
+import { faPencil, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import Modal from './../components/Modal';
 
-const getVehilce = async () => {
-    // const vehicles = await axios.get('https:/localhost:8000/api/v1/vehicle')
-    // console.log(vehicles)
-}
+const Vehicle = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedVehicleId, setSelectedVehicleId] = useState(null);
+    const [vehicles, setVehicles] = useState([]);
 
-const Vehicle = async () => {
-    const [isOpen, setIsOpen] = useState(false)
+    const fetchVehicles = async () => {
+        try {
+            const res = await fetch('http://localhost:8000/api/v1/vehicle');
+            const data = await res.json();
+            setVehicles(data.data);
+        } catch (error) {
+            console.error('Error fetching vehicles:', error);
+        }
+    };
 
-    const openModal = () => {
-        setIsOpen(true)
-    }
+    useEffect(() => {
+        fetchVehicles();
+    }, []);
+
+    const openModal = (vehicleId) => {
+        setIsOpen(true);
+        setSelectedVehicleId(vehicleId);
+    };
 
     const closeModal = () => {
-        setIsOpen(false)
-    }
+        setIsOpen(false);
+        setSelectedVehicleId(null);
+    };
 
-    getVehilce()
-    const res = await fetch('http://localhost:8000/api/v1/vehicle')
-    const vehicles = await res.json()
+    const handleDelete = async () => {
+        try {
+            // Perform delete action using selectedVehicleId
+            await fetch(`http://localhost:8000/api/v1/vehicle/${selectedVehicleId}`, {
+                method: 'DELETE',
+            });
+            // Update the list of vehicles
+            fetchVehicles();
+        } catch (error) {
+            console.error('Error deleting vehicle:', error);
+        } finally {
+            // Close modal and reset state
+            closeModal();
+        }
+    };
 
     return (
         <>
-            <h1>Vehilce</h1>
+            <h1>Vehicle</h1>
             <table>
                 <thead>
                     <tr>
@@ -41,7 +66,7 @@ const Vehicle = async () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {vehicles.data.map((item, index) => (
+                    {vehicles.map((item, index) => (
                         <tr key={index}>
                             <td>{item.plateNumber}</td>
                             <td>{item.brand}</td>
@@ -50,37 +75,37 @@ const Vehicle = async () => {
                             <td>{item.year}</td>
                             <td>
                                 <Link href={'/vehicle/' + item._id}>
-                                    <FontAwesomeIcon icon={faFileLines} size={'1em'} />
+                                    <FontAwesomeIcon icon={faFileLines} size={'sm'} />
                                 </Link>
                                 <Link href={'/vehicle/' + item._id + '/edit'}>
-                                    <FontAwesomeIcon icon={faPencil} size={'1em'} />
+                                    <FontAwesomeIcon icon={faPencil} size={'sm'} />
                                 </Link>
-                                <Link href={'/vehicle/' + item._id + '/delete'}>
-                                    <FontAwesomeIcon icon={faTrashCan} size={'1em'} />
-                                </Link>
+                                <a href="#" onClick={() => openModal(item._id)}>
+                                    <FontAwesomeIcon icon={faTrashAlt} size={'sm'} />
+                                </a>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
 
-            <div className="flex justify-center items-center h-screen">
-                {/* Button to open modal */}
-                <button
-                    onClick={openModal}
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                >
-                    Open Modal
-                </button>
-
-                {/* Modal component */}
-                <Modal isOpen={isOpen} onClose={closeModal}>
-                    <h1 className="text-2xl font-bold mb-4">Modal Title</h1>
-                    <p>Modal Content goes here...</p>
-                </Modal>
-            </div>
+            {/* Confirmation Modal */}
+            <Modal isOpen={isOpen} onClose={closeModal}>
+                    <>
+                        <h1 className="text-2xl font-bold mb-4">Confirm Deletion</h1>
+                        <p>Are you sure you want to delete this vehicle?</p>
+                        <div className="mt-4 flex justify-center">
+                            <button onClick={handleDelete} className="bg-red-500 text-white px-4 py-2 rounded-md mr-2">
+                                Confirm
+                            </button>
+                            <button onClick={closeModal} className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md">
+                                Cancel
+                            </button>
+                        </div>
+                    </>
+            </Modal>
         </>
-    )
-}
+    );
+};
 
-export default Vehicle
+export default Vehicle;
