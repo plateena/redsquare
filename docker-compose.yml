@@ -5,9 +5,9 @@ services:
     build:
       context: ./web
     ports:
-      - "8080:8080"
+      - "3000:3000"
     volumes:
-      - ./web:/usr/src/app
+      - ./web:/app
     depends_on:
       - app
 
