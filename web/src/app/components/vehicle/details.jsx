@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react'
 import brandModelData from '../../../data/brand-model.json'
 import colorData from '../../../data/color.json'
+import { ToastContainer, toast, Bounce } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const VehicleDetails = ({ vehicleId, type = 'view' }) => {
     const [vehicle, setVehicle] = useState(null)
@@ -9,21 +11,22 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
     const [selectedModel, setSelectedModel] = useState('')
     const [selectedColor, setSelectedColor] = useState('')
     const [selectedYear, setSelectedYear] = useState('')
+    const [editSuccess, setEditSuccess] = useState(false)
     const currentYear = new Date().getFullYear()
 
     useEffect(() => {
         // Fetch vehicle details
-        if(vehicleId) {
-        fetch(`http://localhost:8000/api/v1/vehicle/${vehicleId}`)
-            .then((response) => response.json())
-            .then((data) => {
-                setVehicle(data)
-                setSelectedBrand(data.brand)
-                setSelectedModel(data.model)
-                setSelectedColor(data.color)
-                setSelectedYear(data.year)
-            })
-            .catch((error) => console.error('Error fetching vehicle details:', error))
+        if (vehicleId) {
+            fetch(`http://localhost:8000/api/v1/vehicle/${vehicleId}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    setVehicle(data)
+                    setSelectedBrand(data.brand)
+                    setSelectedModel(data.model)
+                    setSelectedColor(data.color)
+                    setSelectedYear(data.year)
+                })
+                .catch((error) => console.error('Error fetching vehicle details:', error))
         }
     }, [vehicleId])
 
@@ -82,7 +85,7 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
                     throw new Error('Network response was not ok')
                 }
                 // Assuming you want to handle the response somehow
-                window.location = "/vehicle"
+                window.location = '/vehicle'
                 // return response.json()
             })
             .then((data) => {
@@ -93,7 +96,6 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
                 console.error('Error:', error)
                 // Handle errors here
             })
-
     }
 
     const editVehicle = (formData) => {
@@ -108,6 +110,28 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok')
                 }
+
+                toast.success({
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
+                toast.success('Edit successful!', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Bounce,
+                })
+
                 // Assuming you want to handle the response somehow
                 return response.json()
             })
@@ -123,7 +147,6 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
 
     return (
         <>
-            <hr />
             <div className="container mx-auto">
                 <h1 className="text-2xl font-bold my-4">Vehicle Details</h1>
                 <form onSubmit={handleSubmit}>
@@ -157,7 +180,8 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
                             >
                                 <option value="">Select Model</option>
                                 {selectedBrand &&
-                                    brandModelData.brands.find((brand) => brand.name === selectedBrand)
+                                    brandModelData.brands
+                                        .find((brand) => brand.name === selectedBrand)
                                         .models.map((model) => (
                                             <option key={model} value={model}>
                                                 {model}
@@ -226,7 +250,7 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
                     )}
                 </form>
             </div>
-            <hr />
+            <ToastContainer />
         </>
     )
 }

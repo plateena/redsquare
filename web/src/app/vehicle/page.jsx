@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import { ToastContainer, toast, Bounce } from 'react-toastify'
 import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPencilAlt, faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons'
@@ -49,6 +50,17 @@ const Vehicle = () => {
                 method: 'DELETE',
             });
             fetchVehicles();
+            toast.success('Delete successful!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Bounce,
+            })
         } catch (error) {
             console.error('Error deleting vehicle:', error);
         } finally {
@@ -133,6 +145,8 @@ const Vehicle = () => {
                     </div>
                 </div>
             </Modal>
+
+            <ToastContainer />
         </div>
     );
 };
