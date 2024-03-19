@@ -8,6 +8,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import VehicleCard from '../components/vehicle/card'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import './../styles/vehicle-list.scss'
+import { toastOptions } from '../config'
 
 const Vehicle = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -51,17 +52,7 @@ const Vehicle = () => {
                 method: 'DELETE',
             })
             fetchVehicles()
-            toast.success('Delete successful!', {
-                position: 'top-right',
-                autoClose: 5000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'colored',
-                transition: Bounce,
-            })
+            toast.success('Delete successful!', toastOptions)
         } catch (error) {
             console.error('Error deleting vehicle:', error)
         } finally {

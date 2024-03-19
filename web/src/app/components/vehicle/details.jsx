@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import brandModelData from '../../../data/brand-model.json'
 import colorData from '../../../data/color.json'
 import { ToastContainer, toast, Bounce } from 'react-toastify'
+import { toastOptions } from '../../config'
 import 'react-toastify/dist/ReactToastify.css'
 
 const VehicleDetails = ({ vehicleId, type = 'view' }) => {
@@ -33,7 +34,6 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
     // Event handler for selecting brand
     const handleBrandChange = (event) => {
         setSelectedBrand(event.target.value)
-        // Reset selected model when brand changes
         setSelectedModel('')
     }
 
@@ -111,26 +111,7 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
                     throw new Error('Network response was not ok')
                 }
 
-                toast.success({
-                    position: 'top-right',
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                })
-                toast.success('Edit successful!', {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                    transition: Bounce,
-                })
+                toast.success('Edit successful!', toastOptions)
 
                 // Assuming you want to handle the response somehow
                 return response.json()
