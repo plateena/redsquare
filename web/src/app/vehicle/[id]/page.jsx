@@ -3,11 +3,11 @@ import Link from 'next/link'
 import VehicleDetail from '../../components/vehicle/details'
 
 const VehicleDetailsPage = async (req) => {
-    const { id } = req.params
+    const { id, type } = req.params
 
     return (
         <div>
-        <VehicleDetail vehicleId={id} />
+        <VehicleDetail vehicleId={id} type={type} />
 
         <Link href={"/maintenance/"+id+"/add"}>Maintenance</Link>
         </div>
