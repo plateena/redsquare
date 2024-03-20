@@ -1,7 +1,7 @@
 import { Bounce } from "react-toastify";
 
 export const apiConfig = {
-    url: "http://localhost:8000/api/v1",
+    url: 'http://localhost:8000/api/v1',
 }
 
 export const toastOptions = {

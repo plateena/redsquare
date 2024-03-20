@@ -29,8 +29,6 @@ const VehicleDetails = ({ vehicleId, type = 'view' }) => {
                     setSelectedStatus(data.status)
                 })
                 .catch((error) => console.error('Error fetching vehicle details:', error))
-        } else {
-            console.log('no vehicleId', vehicleId)
         }
     }, [vehicleId])
 

@@ -7,7 +7,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./web:/app
+      - ./web/src:/app/src
     depends_on:
       - app
 
@@ -19,10 +19,10 @@ services:
     depends_on:
       - mongodb
     volumes:
-      - ./app:/usr/src/app
+      - ./app/src:/usr/src/app/src
 
   mongodb:
-    image: mongo
+    image: mongo:latest
     ports:
       - "27017:27017"
     volumes:
